@@ -187,14 +187,11 @@ if(!ok)return;
 
 button.disabled=true;
 
-const {data:updated,error}=await supabase
-.from('control_members')
-.update({
-status,
-approved_at:status==='approved'?new Date().toISOString():null
-})
-.eq('user_id',member.user_id)
-.select('user_id,status');
+
+const {error}=await supabase.rpc('change_member_status',{
+  p_member_id:member.user_id,
+  p_new_status:status
+});
 
 if(error){
 message('فشل التعديل: '+errorText(error));
