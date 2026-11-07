@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,484 +5,197 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>معالجة ملفات الامتحانات | LAJNA</title>
 <style>
-  body {
-    font-family: Tahoma, Arial, sans-serif;
-    background: #f3f7f8;
-    color: #173b43;
-    margin: 0;
-  }
-  header {
-    background: #164d59;
-    color: white;
-    text-align: center;
-    padding: 24px;
-  }
-  main {
-    max-width: 1050px;
-    margin: 25px auto;
-    padding: 22px;
-    background: white;
-    border-radius: 12px;
-  }
-  input, button {
-    padding: 12px;
-    margin: 8px 0;
-  }
-  button {
-    background: #176d7b;
-    color: white;
-    border: 0;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  button:disabled { opacity: .5; }
-  .table-wrap { overflow-x: auto; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-  }
-  th, td {
-    border: 1px solid #ddd;
-    padding: 9px;
-    text-align: right;
-  }
-  th { background: #edf3f5; }
-  #message { white-space: pre-wrap; }
+  *{box-sizing:border-box}body{font-family:Tahoma,Arial,sans-serif;background:#f3f7f8;color:#173b43;margin:0;line-height:1.65}
+  header{background:#164d59;color:#fff;text-align:center;padding:24px}header h1{margin:0}
+  main{max-width:1100px;margin:25px auto;padding:22px;background:#fff;border-radius:12px}
+  input,button{padding:12px;margin:8px 0;max-width:100%}button{background:#176d7b;color:#fff;border:0;border-radius:8px;cursor:pointer}button:disabled{opacity:.5;cursor:wait}
+  .table-wrap{overflow-x:auto;margin:12px 0 22px}table{width:100%;border-collapse:collapse;min-width:850px}th,td{border:1px solid #ddd;padding:9px;text-align:right;vertical-align:top}th{background:#edf3f5}
+  .status{white-space:pre-wrap;padding:10px;border-radius:6px;background:#edf3f5} .warning{background:#fff2d8;color:#694300} .error{background:#ffe6e6;color:#8b1b1b} .ok{background:#e8f5ee;color:#185a3d}
+  .note{color:#4c6066;font-size:.92rem}h3{margin-top:24px}section[hidden],table[hidden],div[hidden]{display:none!important}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>LAJNA | لجنة</h1>
-  <p>معاينة بيانات ملفات الامتحانات</p>
-</header>
-
+<header><h1>LAJNA | لجنة</h1><p>معاينة بيانات ملفات الامتحانات</p></header>
 <main>
   <h2>قراءة ملف Excel</h2>
-  <p id="accountStatus">جاري التحقق من الصلاحيات...</p>
-
+  <p id="accountStatus" class="status">جاري التحقق من الصلاحيات...</p>
   <section id="processor" hidden>
-    <p>
-      اختاري ملف Excel تجريبيًا خاليًا من بيانات
-      الطلاب الحقيقية. ستتم قراءته محليًا
-      داخل المتصفح دون رفعه إلى قاعدة البيانات.
-    </p>
-
-    <input
-      id="excelFile"
-      type="file"
-      accept=".xlsx"
-    >
-
-    <button id="readButton" type="button">
-      قراءة الملف ومعاينة البيانات
-    </button>
-
-    <p id="message" role="status"></p>
-
+    <p class="note">استخدمي ملف Excel تجريبيًا خاليًا من بيانات الطلاب الحقيقية. تتم القراءة داخل المتصفح، ولا يتم رفع الملف أو حفظ السجلات في قاعدة البيانات.</p>
+    <input id="excelFile" type="file" accept=".xlsx">
+    <button id="readButton" type="button">قراءة الملف ومعاينة البيانات</button>
+    <p id="message" class="status" role="status" aria-live="polite"></p>
     <h3 id="summary"></h3>
-
-    <div class="table-wrap">
-      <table id="resultsTable" hidden>
-        <thead>
-          <tr>
-            <th>Sheet</th>
-            <th>الرقم الجامعي</th>
-            <th>اسم الطالب</th>
-            <th>اسم المادة</th>
-            <th>كود المادة</th>
-            <th>تاريخ الامتحان</th>
-            <th>اللجنة</th>
-            <th>رقم الجلوس</th>
-          </tr>
-        </thead>
-        <tbody id="results"></tbody>
-      </table>
-    </div>
+    <h3 id="studentsTitle" hidden>سجلات الطلاب</h3>
+    <div class="table-wrap"><table id="resultsTable" hidden><thead><tr><th>الشيت</th><th>صف Excel</th><th>الرقم الجامعي</th><th>اسم الطالب</th><th>اسم المادة</th><th>كود المادة</th><th>تاريخ الامتحان</th><th>اللجنة</th><th>رقم الجلوس</th></tr></thead><tbody id="results"></tbody></table></div>
+    <section id="duplicatesSection" hidden><h3>سجلات مكررة</h3><div class="table-wrap"><table><thead><tr><th>الرقم الجامعي</th><th>كود المادة</th><th>التاريخ</th><th>أول ظهور</th><th>الظهور المكرر</th></tr></thead><tbody id="duplicatesBody"></tbody></table></div></section>
+    <section id="reviewSection" hidden><h3>صفوف تحتاج مراجعة</h3><p class="note">هذه الصفوف لم تُعتمد كسجلات طلاب. راجعيها في Excel قبل أي حفظ مستقبلي.</p><div class="table-wrap"><table><thead><tr><th>الشيت</th><th>صف Excel</th><th>الرقم الجامعي</th><th>الاسم/النص</th><th>رقم الجلوس</th><th>السبب</th></tr></thead><tbody id="reviewBody"></tbody></table></div></section>
   </section>
-
   <p><a href="./">العودة للرئيسية</a></p>
 </main>
-
 <script type="module">
-import { createClient } from
-  'https://esm.sh/@supabase/supabase-js@2';
-
-const supabase = createClient(
-  'https://agaklcxooywqxqhmvhfe.supabase.co',
-  'sb_publishable_VPwiw3f5KE_AXEjqwJWclA_nYCjdN0c'
-);
-
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const supabase = createClient('https://agaklcxooywqxqhmvhfe.supabase.co','sb_publishable_VPwiw3f5KE_AXEjqwJWclA_nYCjdN0c');
 const $ = id => document.getElementById(id);
+const normalize = value => String(value ?? '').trim();
+const compact = value => normalize(value).replace(/\s+/g,'');
+let XLSXLib;
 
 async function checkAccess() {
-  const { data: { user }, error } =
-    await supabase.auth.getUser();
-
-  if (error || !user) {
-    $('accountStatus').textContent =
-      'يجب تسجيل الدخول بحساب الكنترول أولًا.';
-    return;
-  }
-
-  const { data: admin, error: adminError } =
-    await supabase
-      .from('admins')
-      .select('user_id')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-  if (adminError) {
-    $('accountStatus').textContent =
-      'تعذر التحقق من صلاحيات المدير.';
-    return;
-  }
-
-  let allowed = Boolean(admin);
-
-  if (!allowed) {
-    const { data: member, error: memberError } =
-      await supabase
-        .from('control_members')
-        .select('status')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-    if (memberError) {
-      $('accountStatus').textContent =
-        'تعذر التحقق من عضوية الكنترول.';
-      return;
-    }
-
-    allowed = member?.status === 'approved';
-  }
-
-  if (!allowed) {
-    $('accountStatus').textContent =
-      'هذا الحساب غير معتمد لمعالجة الملفات.';
-    return;
-  }
-
-  $('accountStatus').textContent =
-    'تم التحقق من الحساب.';
-  $('processor').hidden = false;
-}
-
-function cell(sheet, address) {
-  const value = sheet[address]?.v;
-  return value == null ? '' : String(value).trim();
-}
-
-function examDate(sheet) {
-  const raw = sheet['D10'];
-
-  if (!raw) return '';
-
-  if (raw.t === 'n') {
-    const date = XLSX.SSF.parse_date_code(raw.v);
-    if (!date) return '';
-
-    return [
-      date.y,
-      String(date.m).padStart(2, '0'),
-      String(date.d).padStart(2, '0')
-    ].join('-');
-  }
-
-  const text = String(raw.v).trim();
-  const match = text.match(/^\d{4}-\d{2}-\d{2}/);
-  return match ? match[0] : text;
-}
-
-function readSheet(sheet, sheetName) {
-  if (!sheet['!ref']) return { rows: [], skipped: [] };
-
-  const range = XLSX.utils.decode_range(sheet['!ref']);
-
-  const courseName = cell(sheet, 'D8');
-  const courseCode = cell(sheet, 'D9');
-  const date = examDate(sheet);
-  const hall = cell(sheet, 'D11');
-
-  const rows = [];
-  const skipped = [];
-
-  for (let row = 14; row <= range.e.r + 1; row++) {
-    const studentId = cell(sheet, 'L' + row);
-    const studentName = cell(sheet, 'C' + row);
-    const seatNumber = cell(sheet, 'A' + row);
-
-    if (!studentId && !studentName && !seatNumber) {
-      continue;
-    }
-
-    const nameText = studentName.trim().toLowerCase();
-
-    if (/^(observer|name\s*:|signature\s*:|المراقب|الاسم\s*:|التوقيع\s*:)/i.test(nameText)) {
-      continue;
-    }
-
-    const validStudentId = /^\d+$/.test(studentId.trim());
-    const validSeatNumber = /^\d+$/.test(seatNumber.trim());
-
-    if (!validStudentId || !studentName || !validSeatNumber) {
-      skipped.push({
-        sheetName,
-        sourceRow: row,
-        studentId,
-        studentName,
-        seatNumber,
-        reason: 'بيانات الطالب أو رقم الجلوس غير مكتملة'
-      });
-      continue;
-    }
-
-    rows.push({
-      sheetName,
-      sourceRow: row,
-      studentId,
-      studentName,
-      courseName,
-      courseCode,
-      date,
-      hall,
-      seatNumber
-    });
-  }
-
-  return { rows, skipped };
-}
-
-function findDuplicateRecords(rows) {
-  const seen = new Map();
-  const duplicates = [];
-
-  for (const row of rows) {
-    const studentId = String(row.studentId ?? '')
-      .trim()
-      .replace(/\s+/g, '');
-
-    const courseCode = String(row.courseCode ?? '')
-      .trim()
-      .replace(/\s+/g, '')
-      .toUpperCase();
-
-    const examDate = String(row.date ?? '').trim();
-
-    if (!studentId || !courseCode || !examDate) {
-      continue;
-    }
-
-    const key = JSON.stringify([
-      studentId,
-      courseCode,
-      examDate
-    ]);
-
-    if (seen.has(key)) {
-      const first = seen.get(key);
-
-      duplicates.push({
-        studentId,
-        studentName: row.studentName,
-        firstSheet: first.sheetName,
-        duplicateSheet: row.sheetName,
-        firstRow: first.sourceRow,
-        duplicateRow: row.sourceRow
-      });
-    } else {
-      seen.set(key, row);
-    }
-  }
-
-  return duplicates;
-}
-  const seen = new Map();
-  const duplicates = [];
-
-  for (const row of rows) {
-    const key = [
-      row.studentId.trim(),
-      row.courseCode.trim().toUpperCase(),
-      row.date.trim()
-    ].join('|');
-
-    if (seen.has(key)) {
-      duplicates.push({
-        studentId: row.studentId,
-        studentName: row.studentName,
-        firstSheet: seen.get(key),
-        duplicateSheet: row.sheetName
-      });
-    } else {
-      seen.set(key, row.sheetName);
-    }
-  }
-
-  return duplicates;
-}
-
-function findIncompleteRecords(rows) {
-  const requiredFields = {
-    studentId: 'الرقم الجامعي',
-    studentName: 'اسم الطالب',
-    courseCode: 'كود المادة',
-    courseName: 'اسم المادة',
-    date: 'تاريخ الامتحان',
-    hall: 'اللجنة',
-    seatNumber: 'رقم الجلوس'
-  };
-
-  const incomplete = [];
-
-  rows.forEach((row, index) => {
-    const missing = Object.entries(requiredFields)
-      .filter(([field]) => !String(row[field] ?? '').trim())
-      .map(([, label]) => label);
-
-    if (missing.length > 0) {
-      incomplete.push({
-        rowNumber: index + 1,
-        sheetName: row.sheetName,
-        studentId: row.studentId,
-        missing
-      });
-    }
-  });
-
-  return incomplete;
-}
-
-function addCell(row, value) {
-  const td = document.createElement('td');
-  td.textContent = value;
-  row.appendChild(td);
-}
-
-$('readButton').addEventListener('click', async () => {
-  const file = $('excelFile').files[0];
-
-  if (!file) {
-    $('message').textContent = 'اختاري ملف Excel أولًا.';
-    return;
-  }
-
-  if (!file.name.toLowerCase().endsWith('.xlsx')) {
-    $('message').textContent =
-      'المعاينة الحالية تدعم XLSX فقط.';
-    return;
-  }
-
-  if (file.size > 1024 * 1024) {
-    $('message').textContent =
-      'الملف أكبر من الحد التجريبي 1 MB.';
-    return;
-  }
-
-  $('readButton').disabled = true;
-  $('message').textContent = 'جاري قراءة الملف...';
-  $('resultsTable').hidden = true;
-  $('results').replaceChildren();
-  $('summary').textContent = '';
-
   try {
-    const XLSXModule = await import(
-      'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm'
-    );
-
-    window.XLSX = XLSXModule.default || XLSXModule;
-
-    const buffer = await file.arrayBuffer();
-
-    const workbook = XLSX.read(buffer, {
-      type: 'array',
-      cellDates: false
-    });
-
-  
-const allRows = [];
-const allSkipped = [];
-
-for (const sheetName of workbook.SheetNames) {
-  const sheet = workbook.Sheets[sheetName];
-
-  const result = readSheet(sheet, sheetName);
-
-  allRows.push(...result.rows);
-  allSkipped.push(...result.skipped);
-}
-
-console.log('Students extracted:', allRows.length);
-console.log('Rows requiring review:', allSkipped);
-
-const incomplete = findIncompleteRecords(allRows);
-
-if (incomplete.length > 0) {
-  const details = incomplete.map(item =>
-    'Sheet: ' + item.sheetName +
-    ' | سجل: ' + item.rowNumber +
-    ' | البيانات الناقصة: ' + item.missing.join('، ')
-  ).join('\n');
-
-  $('summary').textContent =
-    'تحذير: يوجد ' + incomplete.length +
-    ' سجلًا ببيانات ناقصة.';
-
-  console.warn('Incomplete records:\n' + details);
-}
-
-const duplicates = findDuplicateRecords(allRows);
-
-if (duplicates.length > 0) {
-  $('message').textContent =
-    'تحذير: تم اكتشاف ' + duplicates.length +
-    ' سجل مكرر.\n' +
-    duplicates.map(item =>
-      'الرقم الجامعي: ' + item.studentId +
-      ' | أول ظهور: ' + item.firstSheet +
-      ' | التكرار: ' + item.duplicateSheet
-    ).join('\n') +
-    '\nلم يتم حفظ أي بيانات.';
-} else {
-  $('message').textContent =
-    'لم يتم اكتشاف سجلات مكررة.';
-}
-
-const preview = allRows;
-    for (const item of preview) {
-      const tr = document.createElement('tr');
-
-      [
-        item.sheetName,
-        item.studentId,
-        item.studentName,
-        item.courseName,
-        item.courseCode,
-        item.date,
-        item.hall,
-        item.seatNumber
-      ].forEach(value => addCell(tr, value));
-
-      $('results').appendChild(tr);
+    const {data:{user},error} = await supabase.auth.getUser();
+    if (error || !user) { $('accountStatus').textContent='يجب تسجيل الدخول بحساب الكنترول أولًا.';return; }
+    const {data:admin,error:adminError} = await supabase.from('admins').select('user_id').eq('user_id',user.id).maybeSingle();
+    if(adminError) throw adminError;
+    let allowed=Boolean(admin);
+    if(!allowed){
+      const {data:member,error:memberError}=await supabase.from('control_members').select('status').eq('user_id',user.id).maybeSingle();
+      if(memberError) throw memberError;
+      allowed=member?.status==='approved';
     }
-
-    $('summary').textContent =
-      'عدد الشيتات: ' + workbook.SheetNames.length +
-      ' | عدد السجلات المستخرجة: ' + allRows.length;
-
-    $('message').textContent =
-     
-    $('resultsTable').hidden = false;
-
-  } catch (error) {
-    $('message').textContent =
-      'تعذرت قراءة الملف: ' + error.message;
-  } finally {
-    $('readButton').disabled = false;
+    if(!allowed){$('accountStatus').textContent='هذا الحساب غير معتمد لمعالجة الملفات.';return;}
+    $('accountStatus').textContent='تم التحقق من الحساب.';
+    $('accountStatus').className='status ok';
+    $('processor').hidden=false;
+  }catch(error){
+    console.error('Access check failed:',error);
+    $('accountStatus').textContent='تعذر التحقق من الصلاحيات. راجعي الاتصال أو أعيدي تسجيل الدخول.';
+    $('accountStatus').className='status error';
   }
+}
+function cell(sheet,address){
+  const value=sheet[address]?.v;
+  return normalize(value);
+}
+function examDate(sheet){
+  const raw=sheet['D10'];
+  if(!raw)return '';
+  if(raw.t==='n'){
+    const d=XLSXLib.SSF.parse_date_code(raw.v);
+    if(!d)return '';
+    return [d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');
+  }
+  if(raw.v instanceof Date && !Number.isNaN(raw.v.getTime())){
+    const d=raw.v;
+    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+  }
+  const value=normalize(raw.v);
+  const iso=value.match(/^\d{4}-\d{2}-\d{2}/);
+  if(iso)return iso[0];
+  const slash=value.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if(slash){
+    const a=Number(slash[1]),b=Number(slash[2]),y=Number(slash[3]);
+    // Dates with both components <= 12 are ambiguous: leave unchanged for review.
+    if(a>12 && b<=12)return [y,String(b).padStart(2,'0'),String(a).padStart(2,'0')].join('-');
+  }
+  return value;
+}
+function isNonStudentLabel(value){
+  const text=normalize(value).toLowerCase();
+  return /^(observer\b|invigilator\b|signature\s*:|name\s*:|المراقب\b|الملاحظ\b|التوقيع\s*:|الاسم\s*:)/i.test(text);
+}
+function readSheet(sheet,sheetName){
+  const rows=[],review=[];
+  if(!sheet['!ref'])return {rows,review};
+  const range=XLSXLib.utils.decode_range(sheet['!ref']);
+  const courseName=cell(sheet,'D8'),courseCode=cell(sheet,'D9');
+  const date=examDate(sheet),hall=cell(sheet,'D11');
+  for(let sourceRow=14;sourceRow<=range.e.r+1;sourceRow++){
+    const studentId=cell(sheet,'L'+sourceRow);
+    const studentName=cell(sheet,'C'+sourceRow);
+    const seatNumber=cell(sheet,'A'+sourceRow);
+    if(!studentId&&!studentName&&!seatNumber)continue;
+    // Labels and invigilator footer lines are not student rows.
+    if(isNonStudentLabel(studentName)||isNonStudentLabel(studentId)||isNonStudentLabel(seatNumber))continue;
+    // A real student row must have a numeric seat number; other rows are reviewed, not accepted.
+    const numericSeat=/^\d+$/.test(compact(seatNumber));
+    const numericId=/^\d+$/.test(compact(studentId));
+    const hasName=Boolean(studentName);
+    const item={sheetName,sourceRow,studentId,studentName,courseName,courseCode,date,hall,seatNumber};
+    if(!numericSeat){
+      // Footer / headings without a numeric seat number should not become student records.
+      // Preserve suspicious rows for review if they have a plausible numeric student ID.
+      if(numericId)review.push({...item,reason:'رقم الجلوس غير موجود أو غير رقمي'});
+      continue;
+    }
+    const reasons=[];
+    if(!numericId)reasons.push('الرقم الجامعي ناقص أو غير رقمي');
+    if(!hasName)reasons.push('اسم الطالب ناقص');
+    if(!courseName)reasons.push('اسم المادة ناقص');
+    if(!courseCode)reasons.push('كود المادة ناقص');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date))reasons.push('تاريخ الامتحان ناقص أو غير موحد');
+    if(!hall)reasons.push('اللجنة ناقصة');
+    if(reasons.length)review.push({...item,reason:reasons.join('، ')});
+    else rows.push(item);
+  }
+  return {rows,review};
+}
+function findDuplicateRecords(rows){
+  const seen=new Map(),duplicates=[];
+  for(const row of rows){
+    const key=JSON.stringify([compact(row.studentId),compact(row.courseCode).toUpperCase(),normalize(row.date)]);
+    if(seen.has(key)){
+      duplicates.push({first:seen.get(key),current:row});
+    }else seen.set(key,row);
+  }
+  return duplicates;
+}
+function addCells(tbody,values){
+  const tr=document.createElement('tr');
+  for(const value of values){const td=document.createElement('td');td.textContent=normalize(value);tr.appendChild(td);}
+  tbody.appendChild(tr);
+}
+function resetResults(){
+  for(const id of ['results','duplicatesBody','reviewBody'])$(id).replaceChildren();
+  for(const id of ['resultsTable','duplicatesSection','reviewSection','studentsTitle'])$(id).hidden=true;
+  $('summary').textContent='';
+  $('message').textContent='';
+  $('message').className='status';
+}
+$('readButton').addEventListener('click',async()=>{
+  resetResults();
+  const file=$('excelFile').files[0];
+  if(!file){$('message').textContent='اختاري ملف Excel أولًا.';return;}
+  if(!file.name.toLowerCase().endsWith('.xlsx')){$('message').textContent='المعاينة الحالية تدعم XLSX فقط.';return;}
+  if(file.size>1024*1024){$('message').textContent='الملف أكبر من الحد التجريبي 1 MB.';return;}
+  $('readButton').disabled=true;
+  $('message').textContent='جاري قراءة الملف...';
+  try{
+    if(!XLSXLib){const module=await import('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm');XLSXLib=module.default||module;}
+    const workbook=XLSXLib.read(await file.arrayBuffer(),{type:'array',cellDates:false});
+    const allRows=[],allReview=[];
+    for(const sheetName of workbook.SheetNames){
+      const result=readSheet(workbook.Sheets[sheetName],sheetName);
+      allRows.push(...result.rows);
+      allReview.push(...result.review);
+    }
+    const duplicates=findDuplicateRecords(allRows);
+    for(const item of allRows){
+      addCells($('results'),[item.sheetName,item.sourceRow,item.studentId,item.studentName,item.courseName,item.courseCode,item.date,item.hall,item.seatNumber]);
+    }
+    for(const item of duplicates){
+      addCells($('duplicatesBody'),[item.current.studentId,item.current.courseCode,item.current.date,`${item.first.sheetName} — صف ${item.first.sourceRow}`,`${item.current.sheetName} — صف ${item.current.sourceRow}`]);
+    }
+    for(const item of allReview){
+      addCells($('reviewBody'),[item.sheetName,item.sourceRow,item.studentId,item.studentName,item.seatNumber,item.reason]);
+    }
+    $('summary').textContent=`عدد الشيتات: ${workbook.SheetNames.length} | سجلات الطلاب: ${allRows.length} | سجلات مكررة: ${duplicates.length} | صفوف تحتاج مراجعة: ${allReview.length}`;
+    $('resultsTable').hidden=allRows.length===0;
+    $('studentsTitle').hidden=allRows.length===0;
+    $('duplicatesSection').hidden=duplicates.length===0;
+    $('reviewSection').hidden=allReview.length===0;
+    if(duplicates.length||allReview.length){
+      $('message').textContent='تمت المعاينة مع وجود ملاحظات. راجعي السجلات المكررة والصفوف غير المعتمدة أدناه. لم يتم حفظ أي بيانات.';
+      $('message').className='status warning';
+    }else{
+      $('message').textContent='اكتملت المعاينة دون اكتشاف تكرار أو صفوف تحتاج مراجعة وفق قواعد الفحص الحالية. لم يتم حفظ أي بيانات.';
+      $('message').className='status ok';
+    }
+  }catch(error){
+    console.error('Excel processing failed:',error);
+    $('message').textContent='تعذرت قراءة الملف: '+error.message;
+    $('message').className='status error';
+  }finally{$('readButton').disabled=false;}
 });
-
 await checkAccess();
 </script>
 </body>
