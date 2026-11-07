@@ -286,6 +286,72 @@ await checkAdmin();
 });
 
 async function loadStatistics() {
+  function renderDailyVisitsChart(dailyVisits = []) {
+  const chart = $('dailyVisitsChart');
+  chart.replaceChildren();
+
+  const visitsByDate = new Map(
+    dailyVisits.map(item => [
+      item.date,
+      Number(item.visits) || 0
+    ])
+  );
+
+  const days = [];
+  const today = new Date();
+
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+
+    const key = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Africa/Cairo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(date);
+
+    days.push({
+      date: key,
+      visits: visitsByDate.get(key) || 0
+    });
+  }
+
+  const maxVisits = Math.max(
+    1,
+    ...days.map(day => day.visits)
+  );
+
+  const bars = document.createElement('div');
+  bars.style.cssText =
+    'display:flex;align-items:flex-end;gap:6px;' +
+    'min-width:750px;height:220px;padding:12px 0';
+
+  for (const day of days) {
+    const column = document.createElement('div');
+    column.style.cssText =
+      'flex:1;display:flex;flex-direction:column;' +
+      'align-items:center;justify-content:flex-end;height:100%';
+
+    const count = document.createElement('small');
+    count.textContent = day.visits;
+
+    const bar = document.createElement('div');
+    bar.style.cssText =
+      'width:100%;background:#247c87;border-radius:4px 4px 0 0;' +
+      'height:' + Math.max(2, day.visits / maxVisits * 150) + 'px';
+
+    bar.title = day.date + ': ' + day.visits + ' زيارة';
+
+    const label = document.createElement('small');
+    label.textContent = day.date.slice(8);
+
+    column.append(count, bar, label);
+    bars.appendChild(column);
+  }
+
+  chart.appendChild(bars);
+}
   const status = $('statisticsMessage');
   status.textContent = 'جاري تحميل الإحصائيات...';
 
