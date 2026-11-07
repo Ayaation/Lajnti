@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معالجة ملفات الامتحانات | LAJNA</title>
+<style>
+  body {
+    font-family: Tahoma, Arial, sans-serif;
+    background: #f3f7f8;
+    color: #173b43;
+    margin: 0;
+  }
+  header {
+    background: #164d59;
+    color: white;
+    text-align: center;
+    padding: 24px;
+  }
+  main {
+    max-width: 1050px;
+    margin: 25px auto;
+    padding: 22px;
+    background: white;
+    border-radius: 12px;
+  }
+  input, button {
+    padding: 12px;
+    margin: 8px 0;
+  }
+  button {
+    background: #176d7b;
+    color: white;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .5; }
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 9px;
+    text-align: right;
+  }
+  th { background: #edf3f5; }
+  #message { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>LAJNA | لجنة</h1>
+  <p>معاينة بيانات ملفات الامتحانات</p>
+</header>
+
+<main>
+  <h2>قراءة ملف Excel</h2>
+  <p id="accountStatus">جاري التحقق من الصلاحيات...</p>
+
+  <section id="processor" hidden>
+    <p>
+      اختاري ملف Excel تجريبيًا خاليًا من بيانات
+      الطلاب الحقيقية. ستتم قراءته محليًا
+      داخل المتصفح دون رفعه إلى قاعدة البيانات.
+    </p>
+
+    <input
+      id="excelFile"
+      type="file"
+      accept=".xlsx"
+    >
+
+    <button id="readButton" type="button">
+      قراءة الملف ومعاينة البيانات
+    </button>
+
+    <p id="message" role="status"></p>
+
+    <h3 id="summary"></h3>
+
+    <div class="table-wrap">
+      <table id="resultsTable" hidden>
+        <thead>
+          <tr>
+            <th>Sheet</th>
+            <th>الرقم الجامعي</th>
+            <th>اسم الطالب</th>
+            <th>اسم المادة</th>
+            <th>كود المادة</th>
+            <th>تاريخ الامتحان</th>
+            <th>اللجنة</th>
+            <th>رقم الجلوس</th>
+          </tr>
+        </thead>
+        <tbody id="results"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p><a href="./">العودة للرئيسية</a></p>
+</main>
+
+<script type="module">
+import { createClient } from
+  'https://esm.sh/@supabase/supabase-js@2';
+
+const supabase = createClient(
+  'https://agaklcxooywqxqhmvhfe.supabase.co',
+  'sb_publishable_VPwiw3f5KE_AXEjqwJWclA_nYCjdN0c'
+);
+
+const $ = id => document.getElementById(id);
+
+async function checkAccess() {
+  const { data: { user }, error } =
+    await supabase.auth.getUser();
+
+  if (error || !user) {
+    $('accountStatus').textContent =
+      'يجب تسجيل الدخول بحساب الكنترول أولًا.';
+    return;
+  }
+
+  const { data: admin, error: adminError } =
+    await supabase
+      .from('admins')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+  if (adminError) {
+    $('accountStatus').textContent =
+      'تعذر التحقق من صلاحيات المدير.';
+    return;
+  }
+
+  let allowed = Boolean(admin);
+
+  if (!allowed) {
+    const { data: member, error: memberError } =
+      await supabase
+        .from('control_members')
+        .select('status')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    if (memberError) {
+      $('accountStatus').textContent =
+        'تعذر التحقق من عضوية الكنترول.';
+      return;
+    }
+
+    allowed = member?.status === 'approved';
+  }
+
+  if (!allowed) {
+    $('accountStatus').textContent =
+      'هذا الحساب غير معتمد لمعالجة الملفات.';
+    return;
+  }
+
+  $('accountStatus').textContent =
+    'تم التحقق من الحساب.';
+  $('processor').hidden = false;
+}
+
+function cell(sheet, address) {
+  const value = sheet[address]?.v;
+  return value == null ? '' : String(value).trim();
+}
+
+function examDate(sheet) {
+  const raw = sheet['D10'];
+
+  if (!raw) return '';
+
+  if (raw.t === 'n') {
+    const date = XLSX.SSF.parse_date_code(raw.v);
+    if (!date) return '';
+
+    return [
+      date.y,
+      String(date.m).padStart(2, '0'),
+      String(date.d).padStart(2, '0')
+    ].join('-');
+  }
+
+  const text = String(raw.v).trim();
+  const match = text.match(/^\d{4}-\d{2}-\d{2}/);
+  return match ? match[0] : text;
+}
+
+function readSheet(sheet, sheetName) {
+  const range = XLSX.utils.decode_range(sheet['!ref']);
+
+  const courseName = cell(sheet, 'D8');
+  const courseCode = cell(sheet, 'D9');
+  const date = examDate(sheet);
+  const hall = cell(sheet, 'D11');
+
+  const rows = [];
+
+  for (let row = 14; row <= range.e.r + 1; row++) {
+    const studentId = cell(sheet, 'L' + row);
+    const studentName = cell(sheet, 'C' + row);
+    const seatNumber = cell(sheet, 'A' + row);
+
+    if (!studentId || !studentName) continue;
+
+    rows.push({
+      sheetName,
+      studentId,
+      studentName,
+      courseName,
+      courseCode,
+      date,
+      hall,
+      seatNumber
+    });
+  }
+
+  return rows;
+}
+
+function addCell(row, value) {
+  const td = document.createElement('td');
+  td.textContent = value;
+  row.appendChild(td);
+}
+
+$('readButton').addEventListener('click', async () => {
+  const file = $('excelFile').files[0];
+
+  if (!file) {
+    $('message').textContent = 'اختاري ملف Excel أولًا.';
+    return;
+  }
+
+  if (!file.name.toLowerCase().endsWith('.xlsx')) {
+    $('message').textContent =
+      'المعاينة الحالية تدعم XLSX فقط.';
+    return;
+  }
+
+  if (file.size > 1024 * 1024) {
+    $('message').textContent =
+      'الملف أكبر من الحد التجريبي 1 MB.';
+    return;
+  }
+
+  $('readButton').disabled = true;
+  $('message').textContent = 'جاري قراءة الملف...';
+  $('resultsTable').hidden = true;
+  $('results').replaceChildren();
+  $('summary').textContent = '';
+
+  try {
+    const XLSXModule = await import(
+      'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm'
+    );
+
+    window.XLSX = XLSXModule.default || XLSXModule;
+
+    const buffer = await file.arrayBuffer();
+
+    const workbook = XLSX.read(buffer, {
+      type: 'array',
+      cellDates: false
+    });
+
+    const allRows = [];
+
+    for (const sheetName of workbook.SheetNames) {
+      const sheet = workbook.Sheets[sheetName];
+      allRows.push(...readSheet(sheet, sheetName));
+    }
+
+    const preview = allRows.slice(0, 20);
+
+    for (const item of preview) {
+      const tr = document.createElement('tr');
+
+      [
+        item.sheetName,
+        item.studentId,
+        item.studentName,
+        item.courseName,
+        item.courseCode,
+        item.date,
+        item.hall,
+        item.seatNumber
+      ].forEach(value => addCell(tr, value));
+
+      $('results').appendChild(tr);
+    }
+
+    $('summary').textContent =
+      'عدد الشيتات: ' + workbook.SheetNames.length +
+      ' | عدد السجلات المستخرجة: ' + allRows.length;
+
+    $('message').textContent =
+      'تمت قراءة الملف محليًا. ' +
+      'المعروض أول 20 سجلًا فقط. ' +
+      'لم تُحفظ أي بيانات في Supabase.';
+
+    $('resultsTable').hidden = false;
+
+  } catch (error) {
+    $('message').textContent =
+      'تعذرت قراءة الملف: ' + error.message;
+  } finally {
+    $('readButton').disabled = false;
+  }
+});
+
+await checkAccess();
+</script>
+</body>
+</html>
