@@ -254,6 +254,37 @@ function findDuplicateRecords(rows) {
   return duplicates;
 }
 
+function findIncompleteRecords(rows) {
+  const requiredFields = {
+    studentId: 'الرقم الجامعي',
+    studentName: 'اسم الطالب',
+    courseCode: 'كود المادة',
+    courseName: 'اسم المادة',
+    date: 'تاريخ الامتحان',
+    hall: 'اللجنة',
+    seatNumber: 'رقم الجلوس'
+  };
+
+  const incomplete = [];
+
+  rows.forEach((row, index) => {
+    const missing = Object.entries(requiredFields)
+      .filter(([field]) => !String(row[field] ?? '').trim())
+      .map(([, label]) => label);
+
+    if (missing.length > 0) {
+      incomplete.push({
+        rowNumber: index + 1,
+        sheetName: row.sheetName,
+        studentId: row.studentId,
+        missing
+      });
+    }
+  });
+
+  return incomplete;
+}
+
 function addCell(row, value) {
   const td = document.createElement('td');
   td.textContent = value;
