@@ -197,6 +197,8 @@ function examDate(sheet) {
 }
 
 function readSheet(sheet, sheetName) {
+  if (!sheet['!ref']) return [];
+
   const range = XLSX.utils.decode_range(sheet['!ref']);
 
   const courseName = cell(sheet, 'D8');
@@ -211,10 +213,14 @@ function readSheet(sheet, sheetName) {
     const studentName = cell(sheet, 'C' + row);
     const seatNumber = cell(sheet, 'A' + row);
 
-    if (!studentId || !studentName) continue;
+    // تجاهل الصف الفارغ بالكامل فقط
+    if (!studentId && !studentName && !seatNumber) {
+      continue;
+    }
 
     rows.push({
       sheetName,
+      sourceRow: row,
       studentId,
       studentName,
       courseName,
