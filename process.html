@@ -281,8 +281,7 @@ $('readButton').addEventListener('click', async () => {
       allRows.push(...readSheet(sheet, sheetName));
     }
 
-    const preview = allRows.slice(0, 20);
-
+const preview = allRows;
     for (const item of preview) {
       const tr = document.createElement('tr');
 
