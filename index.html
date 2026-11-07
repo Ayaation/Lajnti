@@ -3,151 +3,719 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LAJNA | لجنة</title>  <style>
-    * { box-sizing: border-box; }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101e35">
+  <meta name="description" content="LAJNA - بوابة الاستعلام عن اللجان الامتحانية">
+  <title>LAJNA | لجنة</title>
+
+  <style>
+    :root {
+      --navy: #101e35;
+      --navy2: #1a3152;
+      --orange: #ed782c;
+      --gold: #d8ad61;
+      --cream: #fffaf2;
+      --bg: #f4f6fa;
+      --text: #24334b;
+      --muted: #718096;
+      --border: #e3e8ef;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
+      background: var(--bg);
+      color: var(--text);
       font-family: Tahoma, Arial, sans-serif;
-      background: #f3f6fa;
-      color: #20324c;
+      line-height: 1.8;
     }
-    header {
-      background: #17345b;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: auto;
+    }
+
+    .topbar {
+      background: var(--navy);
       color: white;
-      padding: 24px 18px;
-      text-align: center;
-      border-bottom: 5px solid #c5a46d;
+      border-bottom: 3px solid var(--orange);
     }
-    .university {
-      color: #e5c68c;
-      font-size: 15px;
-      letter-spacing: 1px;
+
+    .nav {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 12px 0;
     }
-    h1 { margin: 12px 0 8px; font-size: 27px; }
-    .subtitle { color: #e0e7f0; }
-    main {
-      max-width: 780px;
-      margin: 45px auto;
-      padding: 0 18px;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 8px 30px #17345b12;
-      margin-bottom: 22px;
-    }
-    h2 { margin-top: 0; color: #17345b; }
-    label {
-      display: block;
-      margin: 18px 0 8px;
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      background: #ffffff10;
+      display: grid;
+      place-items: center;
+      font-size: 27px;
+      color: var(--gold);
       font-weight: bold;
     }
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 9px;
-      font: inherit;
+
+    .brand-name {
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      line-height: 1.3;
     }
-    button {
-      width: 100%;
-      margin-top: 22px;
-      padding: 15px;
-      background: #17345b;
+
+    .brand-name span {
+      color: var(--orange);
+    }
+
+    .brand-subtitle {
+      color: #b9c6d8;
+      font-size: 12px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at 10% 20%, #ed782c20, transparent 32%),
+        linear-gradient(135deg, #101e35, #1a3152);
       color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      border: 1px solid #d8ad6128;
+      border-radius: 50%;
+      left: -130px;
+      top: -110px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+      gap: 36px;
+      padding: 80px 0;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      border: 1px solid #d8ad6170;
+      border-radius: 30px;
+      color: var(--gold);
+      padding: 5px 16px;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 5vw, 58px);
+      margin: 0 0 14px;
+      line-height: 1.35;
+    }
+
+    .hero h1 span {
+      color: var(--orange);
+    }
+
+    .hero p {
+      color: #d2dceb;
+      max-width: 550px;
+      font-size: 17px;
+      margin-bottom: 26px;
+    }
+
+    .primary-btn {
+      display: inline-block;
+      background: var(--orange);
+      color: white;
+      padding: 13px 25px;
       border: none;
-      border-radius: 9px;
+      border-radius: 11px;
       font: inherit;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
     }
-    button:hover { background: #254b7c; }
-    .notice {
-      background: #fff8e9;
-      border-right: 4px solid #c5a46d;
-      padding: 14px;
-      border-radius: 8px;
-      line-height: 1.8;
+
+    .primary-btn:hover {
+      background: #d9651c;
+      transform: translateY(-1px);
     }
-    .small {
-      color: #64748b;
-      font-size: 13px;
-      line-height: 1.8;
+
+    .hero-art {
+      display: grid;
+      place-items: center;
     }
-    footer {
+
+    .emblem {
+      width: min(300px, 100%);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, #e4b76b22, #e4b76b06 65%, transparent 70%);
+      border: 2px solid #d8ad6150;
+      display: grid;
+      place-items: center;
+      position: relative;
+      box-shadow: 0 0 0 17px #d8ad6109, 0 0 0 35px #d8ad6106;
+    }
+
+    .emblem svg {
+      width: 76%;
+      height: 76%;
+    }
+
+    .section {
+      padding: 66px 0;
+    }
+
+    .section-heading {
       text-align: center;
-      padding: 25px;
-      color: #64748b;
+      margin-bottom: 35px;
+    }
+
+    .section-heading h2 {
+      font-size: 30px;
+      color: var(--navy);
+      margin: 0 0 8px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .lookup-layout {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      padding: 30px;
+      box-shadow: 0 12px 35px #14243b09;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 22px;
+    }
+
+    .card p {
+      color: var(--muted);
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font: inherit;
+      color: var(--text);
+      background: white;
+    }
+
+    input:focus {
+      outline: 2px solid #ed782c60;
+      border-color: var(--orange);
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 24px;
+    }
+
+    .notice {
+      background: #fff7e9;
+      border-right: 4px solid var(--gold);
+      border-radius: 9px;
+      padding: 15px;
+      color: #705324;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    .info-card {
+      background: var(--cream);
+      border-color: #eedfc3;
+    }
+
+    .info-card ul {
+      padding-right: 20px;
+      color: #536178;
+    }
+
+    .info-card li {
+      margin-bottom: 12px;
+    }
+
+    .departments {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 17px;
+    }
+
+    .department {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 25px 17px;
+      text-align: center;
+      transition: 0.2s;
+    }
+
+    .department:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+    }
+
+    .dept-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 15px;
+      background: #fff1e7;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+    }
+
+    .department h3 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--navy);
+    }
+
+    .department p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 8px 0 0;
+    }
+
+    .control-section {
+      background: #eaf0f7;
+    }
+
+    .control-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .control-card h3 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 24px;
+    }
+
+    .control-card p {
+      margin: 0;
+      max-width: 650px;
+    }
+
+    .disabled-btn {
+      background: #c8d0dc;
+      color: #56657a;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 22px;
+      font: inherit;
+      cursor: not-allowed;
+    }
+
+    .status {
+      display: inline-block;
+      color: #91620b;
+      background: #fff3d7;
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      margin-top: 13px;
+    }
+
+    .university-strip {
+      background: white;
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      text-align: center;
+    }
+
+    .university-strip strong {
+      color: var(--navy);
+    }
+
+    .university-strip p {
+      color: var(--muted);
+      margin: 5px 0 0;
       font-size: 13px;
+    }
+
+    footer {
+      background: var(--navy);
+      color: #aebcd0;
+      text-align: center;
+      padding: 28px 16px;
+      font-size: 13px;
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    @media (max-width: 800px) {
+      .hero-inner,
+      .lookup-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-inner {
+        padding: 50px 0;
+      }
+
+      .hero-art {
+        order: -1;
+      }
+
+      .emblem {
+        width: 190px;
+      }
+
+      .departments {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav {
+        justify-content: center;
+      }
+
+      .nav-links {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .departments {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 22px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .section {
+        padding: 46px 0;
+      }
     }
   </style>
 </head>
+
 <body>
-  <header>
-    <div class="university">SPHINX UNIVERSITY</div>
-    <h1>كلية الهندسة</h1>
-    <div class="subtitle">
-      بوابة الاستعلام عن لجان الامتحانات
+
+  <!-- Navigation -->
+  <header class="topbar">
+    <div class="container nav">
+      <a class="brand" href="#home" aria-label="LAJNA">
+        <div class="logo">ل</div>
+        <div>
+          <div class="brand-name">LAJNA <span>| لجنة</span></div>
+          <div class="brand-subtitle">لجنتك في مكان واحد</div>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="القائمة الرئيسية">
+        <a href="#home">الرئيسية</a>
+        <a href="#lookup">استعلام الطالب</a>
+        <a href="#departments">الأقسام</a>
+        <a href="#control">أعضاء الكنترول</a>
+      </nav>
     </div>
-    <p>Faculty of Engineering | Exam Committee Portal</p>
   </header>
 
-  <main>
-    <section class="card">
-      <h2>استعلام الطالب</h2>
-      <p>أدخل بياناتك للاستعلام عن لجنة الامتحان.</p>
-
-      <form id="lookupForm">
-        <label for="studentId">الرقم الجامعي</label>
-        <input id="studentId" type="text"
-               inputmode="numeric"
-               placeholder="أدخل الرقم الجامعي"
-               required>
-
-        <label for="examDate">تاريخ الامتحان</label>
-        <input id="examDate" type="date" required>
-
-        <button type="submit">استعلام عن اللجنة</button>
-      </form>
-
-      <p id="message" class="notice" hidden></p>
-    </section>
-
-    <section class="card">
-      <h2>بوابة أعضاء الكنترول</h2>
-      <p>
-        إدارة كشوف اللجان ومراجعة البيانات واعتمادها.
-      </p>
-      <div class="notice">
-        تسجيل الدخول ورفع ملفات Excel غير متاحين
-        في نسخة معاينة التصميم.
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="container hero-inner">
+      <div>
+        <div class="eyebrow">Engineering Exam Portal</div>
+        <h1>لجنتك في <span>مكان واحد</span></h1>
+        <p>
+          منصة LAJNA تساعد طلاب كلية الهندسة في الوصول
+          إلى معلومات لجان الامتحانات بسهولة ووضوح،
+          من خلال تجربة بسيطة على الموبايل والكمبيوتر.
+        </p>
+        <a class="primary-btn" href="#lookup">
+          استعلم عن لجنتك
+        </a>
       </div>
-    </section>
 
-    <p class="small">
-      هذه نسخة تجريبية غير رسمية لمعاينة التصميم.
-      لا تحتوي على بيانات طلاب حقيقية.
-    </p>
-  </main>
+      <div class="hero-art">
+        <div class="emblem" aria-label="شعار تجريدي مستوحى من الهوية المصرية والهندسية">
+          <svg viewBox="0 0 240 240"
+               xmlns="http://www.w3.org/2000/svg"
+               role="img"
+               aria-label="رمز هندسي مستوحى من الهرم وعدسة البحث">
+            <defs>
+              <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f1ce89"/>
+                <stop offset="100%" stop-color="#c58a3b"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Egyptian-inspired pyramid -->
+            <path d="M120 28 L207 174 H33 Z"
+                  fill="none"
+                  stroke="url(#goldGradient)"
+                  stroke-width="9"
+                  stroke-linejoin="round"/>
+
+            <!-- Graduation cap -->
+            <path d="M57 82 L120 54 L183 82 L120 109 Z"
+                  fill="#ed782c"
+                  stroke="#f1ce89"
+                  stroke-width="3"/>
+            <path d="M87 99 V118 Q120 140 153 118 V99"
+                  fill="none"
+                  stroke="#f1ce89"
+                  stroke-width="7"
+                  stroke-linecap="round"/>
+            <path d="M183 83 V120"
+                  stroke="#f1ce89"
+                  stroke-width="4"/>
+            <circle cx="183" cy="125" r="6" fill="#ed782c"/>
+
+            <!-- Search symbol -->
+            <circle cx="112" cy="154" r="24"
+                    fill="#101e35"
+                    stroke="#f1ce89"
+                    stroke-width="7"/>
+            <path d="M130 172 L155 198"
+                  stroke="#ed782c"
+                  stroke-width="11"
+                  stroke-linecap="round"/>
+
+            <!-- Engineering base -->
+            <path d="M27 208 H213"
+                  stroke="#d8ad61"
+                  stroke-width="5"
+                  stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Student Lookup -->
+  <section class="section" id="lookup">
+    <div class="container">
+      <div class="section-heading">
+        <h2>استعلام الطالب</h2>
+        <p>اعرف مكان لجنتك وموعد امتحانك في خطوات بسيطة</p>
+      </div>
+
+      <div class="lookup-layout">
+        <div class="card">
+          <h3>بيانات الاستعلام</h3>
+          <p>أدخل رقمك الجامعي وتاريخ الامتحان.</p>
+
+          <form id="lookupForm">
+            <label for="studentId">الرقم الجامعي</label>
+            <input
+              id="studentId"
+              name="studentId"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="أدخل الرقم الجامعي"
+              maxlength="30"
+              required
+            >
+
+            <label for="examDate">تاريخ الامتحان</label>
+            <input
+              id="examDate"
+              name="examDate"
+              type="date"
+              required
+            >
+
+            <button type="submit" class="primary-btn submit-btn">
+              استعلام عن اللجنة
+            </button>
+          </form>
+
+          <div id="message" class="notice" role="status" hidden></div>
+        </div>
+
+        <aside class="card info-card">
+          <h3>معلومات الاستعلام</h3>
+          <ul>
+            <li>اسم المقرر وكوده.</li>
+            <li>تاريخ وموعد الامتحان.</li>
+            <li>مكان اللجنة ورقم القاعة.</li>
+            <li>رقم الجلوس داخل اللجنة.</li>
+          </ul>
+
+          <div class="notice">
+            المنصة حاليًا في مرحلة المعاينة.
+            الاستعلام الفعلي سيتم تفعيله بعد تجهيز
+            قاعدة البيانات ونظام الحماية.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Departments -->
+  <section class="section" id="departments" style="background:#fff">
+    <div class="container">
+      <div class="section-heading">
+        <h2>الأقسام الهندسية</h2>
+        <p>تصميم مخصص لطلاب كلية الهندسة</p>
+      </div>
+
+      <div class="departments">
+        <div class="department">
+          <div class="dept-icon" aria-hidden="true">⌁</div>
+          <h3>الإلكترونيات والاتصالات</h3>
+          <p>Electronics & Communications</p>
+        </div>
+
+        <div class="department">
+          <div class="dept-icon" aria-hidden="true">▱</div>
+          <h3>الهندسة المعمارية</h3>
+          <p>Architecture</p>
+        </div>
+
+        <div class="department">
+          <div class="dept-icon" aria-hidden="true">⚙</div>
+          <h3>الميكاترونكس</h3>
+          <p>Mechatronics</p>
+        </div>
+
+        <div class="department">
+          <div class="dept-icon" aria-hidden="true">▥</div>
+          <h3>الهندسة المدنية</h3>
+          <p>Civil Engineering</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Control Members -->
+  <section class="section control-section" id="control">
+    <div class="container">
+      <div class="card control-card">
+        <div>
+          <h3>بوابة أعضاء الكنترول</h3>
+          <p>
+            مساحة مخصصة لأعضاء الكنترول المعتمدين
+            لإدارة كشوف اللجان ورفع ملفات Excel
+            ومراجعة بيانات الامتحانات.
+          </p>
+
+          <div class="status">
+            الدخول ورفع الملفات متاحان للأعضاء المعتمدين فقط
+            بعد تفعيل النظام
+          </div>
+        </div>
+
+        <button class="disabled-btn" type="button" disabled>
+          تسجيل الدخول — قريبًا
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Institution -->
+  <section class="university-strip">
+    <div class="container">
+      <strong>الجهة المستخدمة للمنصة</strong>
+      <p>
+        Sphinx University — Faculty of Engineering
+      </p>
+    </div>
+  </section>
 
   <footer>
-    Sphinx University — Faculty of Engineering
-    <br>
-    Exam Portal | Design Preview
+    <strong>LAJNA | لجنة</strong>
+    <div>لجنتك في مكان واحد</div>
+    <div>نسخة تجريبية لمعاينة التصميم — لا تحتوي على بيانات طلاب حقيقية</div>
   </footer>
 
   <script>
-    document.getElementById("lookupForm")
-      .addEventListener("submit", function (event) {
-        event.preventDefault();
-        const message = document.getElementById("message");
-        message.hidden = false;
-        message.textContent =
-          "هذه معاينة للتصميم فقط. " +
-          "سيتم تفعيل الاستعلام بعد ربط قاعدة البيانات وتأمينها.";
-      });
+    const form = document.getElementById("lookupForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      message.hidden = false;
+      message.textContent =
+        "هذه نسخة تجريبية لتصميم LAJNA. " +
+        "الاستعلام عن اللجان غير متاح حاليًا. " +
+        "سيتم تفعيله بعد ربط قاعدة بيانات آمنة.";
+    });
   </script>
+
 </body>
 </html>
