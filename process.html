@@ -338,6 +338,22 @@ $('readButton').addEventListener('click', async () => {
       allRows.push(...readSheet(sheet, sheetName));
     }
 
+const incomplete = findIncompleteRecords(allRows);
+
+if (incomplete.length > 0) {
+  const details = incomplete.map(item =>
+    'Sheet: ' + item.sheetName +
+    ' | سجل: ' + item.rowNumber +
+    ' | البيانات الناقصة: ' + item.missing.join('، ')
+  ).join('\n');
+
+  $('summary').textContent =
+    'تحذير: يوجد ' + incomplete.length +
+    ' سجلًا ببيانات ناقصة.';
+
+  console.warn('Incomplete records:\n' + details);
+}
+
 const duplicates = findDuplicateRecords(allRows);
 
 if (duplicates.length > 0) {
