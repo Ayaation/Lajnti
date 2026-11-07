@@ -152,12 +152,14 @@ message('تعذر التحقق من صلاحية المدير: '+errorText(roleE
 $('dashboard').hidden=true;
 return;
 }
+if (!admin) {
+  await supabase.auth.signOut();
 
-if(!admin){
-$('loginSection').hidden=true;
-$('dashboard').hidden=true;
-message('هذا الحساب ليس لديه صلاحية إدارة النظام.');
-return;
+  $('loginSection').hidden = false;
+  $('dashboard').hidden = true;
+
+  message('الحساب السابق ليس مديرًا. سجّلي الدخول بحساب المدير.');
+  return;
 }
 
 $('loginSection').hidden=true;
