@@ -367,7 +367,7 @@ async function loadStatistics() {
   $('totalVisits').textContent = data.total_visits ?? 0;
   $('uniqueVisitors').textContent = data.unique_visitors ?? 0;
   $('visitsToday').textContent = data.visits_today ?? 0;
-
+renderDailyVisitsChart(data.daily_visits ?? []);
   status.textContent = 'تم تحديث الإحصائيات.';
 }
 
