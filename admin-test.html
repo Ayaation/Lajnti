@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>LAJNA | لوحة المدير</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f9f5ed;color:#183342;font-family:Tahoma,Arial,sans-serif;line-height:1.7}
+header{background:white;border-top:5px solid #f47c20;padding:22px;text-align:center}
+h1,h2{color:#073449}
+h1{margin:0}
+main{max-width:1050px;margin:30px auto;padding:0 16px}
+section{background:white;border:1px solid #e4e9e9;border-radius:14px;padding:24px;margin-bottom:18px}
+label{display:block;font-weight:bold;margin:12px 0 5px}
+input{width:100%;padding:11px;border:1px solid #b9c7ce;border-radius:8px;font:inherit}
+button{background:#073449;color:white;border:0;border-radius:8px;padding:10px 15px;margin:4px;cursor:pointer;font:inherit}
+button:disabled{opacity:.5;cursor:wait}
+.approve{background:#18734a}
+.reject{background:#a33232}
+.suspend{background:#9b5b17}
+.secondary{background:#536c78}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px;border-bottom:1px solid #e4e9e9;text-align:right;overflow-wrap:anywhere}
+th{background:#edf3f5}
+.table-wrap{overflow-x:auto}
+#message{padding:14px;background:#eaf1f4;border-radius:8px;white-space:pre-wrap}
+[hidden]{display:none!important}
+a{color:#073449}
+</style>
+</head>
+<body>
+<header>
+<h1>LAJNA | لجنة</h1>
+<p>لوحة إدارة أعضاء الكنترول — نسخة اختبار</p>
+</header>
+<main>
+<section id="loginSection">
+<h2>دخول المدير</h2>
+<form id="loginForm">
+<label for="email">البريد الإلكتروني</label>
+<input id="email" type="email" autocomplete="email" required>
+<label for="password">كلمة المرور</label>
+<input id="password" type="password" autocomplete="current-password" required>
+<button type="submit">تسجيل الدخول</button>
+</form>
+</section>
+
+<section id="dashboard" hidden>
+<h2>إدارة أعضاء الكنترول</h2>
+<p>يمكنك مراجعة طلبات التسجيل وتغيير حالة الحسابات.</p>
+<button id="refresh" type="button" class="secondary">تحديث القائمة</button>
+<button id="logout" type="button" class="secondary">تسجيل الخروج</button>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>الاسم</th>
+<th>الهاتف</th>
+<th>الحالة</th>
+<th>تاريخ التسجيل</th>
+<th>الإجراء</th>
+</tr>
+</thead>
+<tbody id="members"></tbody>
+</table>
+</div>
+</section>
+
+<p id="message" role="status" aria-live="polite" hidden></p>
+<p><a href="./">العودة إلى LAJNA</a></p>
+</main>
+
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const supabase=createClient(
+'https://agaklcxooywqxqhmvhfe.supabase.co',
+'sb_publishable_VPwiw3f5KE_AXEjqwJWclA_nYCjdN0c'
+);
+
+const $=id=>document.getElementById(id);
+
+function message(text){
+$('message').hidden=false;
+$('message').textContent=text;
+}
+
+function errorText(error){
+return error?.message||'حدث خطأ غير متوقع';
+}
+
+function makeCell(row,text){
+const td=document.createElement('td');
+td.textContent=text??'—';
+row.appendChild(td);
+return td;
+}
+
+async function checkAdmin(){
+const {data:{user},error}=await supabase.auth.getUser();
+
+if(error||!user){
+$('loginSection').hidden=false;
+$('dashboard').hidden=true;
+return;
+}
+
+const {data:admin,error:roleError}=await supabase
+.from('admins')
+.select('user_id')
+.eq('user_id',user.id)
+.maybeSingle();
+
+if(roleError){
+message('تعذر التحقق من صلاحية المدير: '+errorText(roleError));
+$('dashboard').hidden=true;
+return;
+}
+
+if(!admin){
+$('loginSection').hidden=true;
+$('dashboard').hidden=true;
+message('هذا الحساب ليس لديه صلاحية إدارة النظام.');
+return;
+}
+
+$('loginSection').hidden=true;
+$('dashboard').hidden=false;
+await loadMembers();
+}
+
+async function loadMembers(){
+const {data,error}=await supabase
+.from('control_members')
+.select('user_id,full_name,phone,status,created_at')
+.order('created_at',{ascending:false});
+
+if(error){
+message('تعذر تحميل الأعضاء: '+errorText(error));
+return;
+}
+
+const tbody=$('members');
+tbody.replaceChildren();
+
+if(!data.length){
+const row=document.createElement('tr');
+const cell=document.createElement('td');
+cell.colSpan=5;
+cell.textContent='لا توجد طلبات تسجيل حاليًا.';
+row.appendChild(cell);
+tbody.appendChild(row);
+return;
+}
+
+for(const member of data){
+const row=document.createElement('tr');
+
+makeCell(row,member.full_name);
+makeCell(row,member.phone);
+makeCell(row,member.status);
+makeCell(row,new Date(member.created_at).toLocaleDateString('ar-EG'));
+
+const actions=document.createElement('td');
+
+const choices=[
+['approved','موافقة','approve'],
+['rejected','رفض','reject'],
+['suspended','إيقاف','suspend'],
+['pending','إعادة للمراجعة','secondary']
+];
+
+for(const [status,label,css] of choices){
+if(member.status===status)continue;
+
+const button=document.createElement('button');
+button.type='button';
+button.className=css;
+button.textContent=label;
+
+button.addEventListener('click',async()=>{
+const ok=confirm('هل تريدين تغيير حالة '+member.full_name+' إلى '+label+'؟');
+if(!ok)return;
+
+button.disabled=true;
+
+const {data:updated,error}=await supabase
+.from('control_members')
+.update({
+status,
+approved_at:status==='approved'?new Date().toISOString():null
+})
+.eq('user_id',member.user_id)
+.select('user_id,status');
+
+if(error){
+message('فشل التعديل: '+errorText(error));
+}else if(!updated||updated.length!==1){
+message('لم يتم تأكيد تعديل الحساب. راجعي صلاحيات قاعدة البيانات.');
+}else{
+message('تم تحديث حالة العضو بنجاح.');
+}
+
+await loadMembers();
+button.disabled=false;
+});
+
+actions.appendChild(button);
+}
+
+row.appendChild(actions);
+tbody.appendChild(row);
+}
+}
+
+$('loginForm').addEventListener('submit',async event=>{
+event.preventDefault();
+const button=event.currentTarget.querySelector('button');
+button.disabled=true;
+
+try{
+const {error}=await supabase.auth.signInWithPassword({
+email:$('email').value.trim(),
+password:$('password').value
+});
+if(error)throw error;
+message('تم تسجيل الدخول.');
+await checkAdmin();
+}catch(error){
+message('فشل تسجيل الدخول: '+errorText(error));
+}finally{
+button.disabled=false;
+}
+});
+
+$('refresh').addEventListener('click',loadMembers);
+
+$('logout').addEventListener('click',async()=>{
+const {error}=await supabase.auth.signOut();
+if(error)message(errorText(error));
+else{
+message('تم تسجيل الخروج.');
+await checkAdmin();
+}
+});
+
+await checkAdmin();
+</script>
+</body>
+</html>
