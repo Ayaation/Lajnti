@@ -299,12 +299,21 @@ $('readButton').addEventListener('click', async () => {
       cellDates: false
     });
 
-    const allRows = [];
+  
+const allRows = [];
+const allSkipped = [];
 
-    for (const sheetName of workbook.SheetNames) {
-      const sheet = workbook.Sheets[sheetName];
-      allRows.push(...readSheet(sheet, sheetName));
-    }
+for (const sheetName of workbook.SheetNames) {
+  const sheet = workbook.Sheets[sheetName];
+
+  const result = readSheet(sheet, sheetName);
+
+  allRows.push(...result.rows);
+  allSkipped.push(...result.skipped);
+}
+
+console.log('Students extracted:', allRows.length);
+console.log('Rows requiring review:', allSkipped);
 
 const incomplete = findIncompleteRecords(allRows);
 
