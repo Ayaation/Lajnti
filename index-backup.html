@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#073449">
+<meta name="description" content="LAJNA | لجنة — بوابة الاستعلام عن اللجان الامتحانية لكلية الهندسة. نسخة معاينة للتصميم.">
+<title>LAJNA | لجنة — بوابة اللجان الامتحانية</title>
+<style>
+:root{--navy:#073449;--navy2:#0b4355;--orange:#f47c20;--gold:#d8a54b;--sand:#f9f5ed;--ink:#183342;--muted:#637784;--line:#e4e9e9;--white:#fff}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.65}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.wrap{width:min(1140px,calc(100% - 40px));margin:auto}
+.topline{height:5px;background:linear-gradient(90deg,var(--navy),var(--gold),var(--orange))}
+.header{background:white;border-bottom:1px solid var(--line);position:relative;z-index:2}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:82px}
+.brand{display:flex;align-items:center;gap:12px;direction:ltr}
+.brandmark{width:60px;height:60px;flex:none}
+.brandtext{display:flex;flex-direction:column;line-height:1.1}
+.brandtext strong{font-family:Arial,sans-serif;font-size:29px;letter-spacing:1px;color:var(--navy)}
+.brandtext span{font-size:12px;color:var(--orange);font-weight:700;text-align:center;margin-top:5px}
+.navlinks{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:700}
+.navlinks a:hover{color:var(--orange)}
+.navtag{background:#fff4e8;color:#9c510e;padding:7px 12px;border-radius:30px;font-size:12px}
+.hero{position:relative;overflow:hidden;background:radial-gradient(circle at 18% 20%,#16647a 0,transparent 32%),linear-gradient(125deg,#062e41,#0a4257 70%,#073448);color:white}
+.hero:before{content:"";position:absolute;inset:0;opacity:.14;background-image:linear-gradient(30deg,transparent 47%,#e8b96e 48%,transparent 49%),linear-gradient(150deg,transparent 47%,#e8b96e 48%,transparent 49%);background-size:100px 100px;mask-image:linear-gradient(to left,#000,transparent)}
+.hero:after{content:"";position:absolute;width:390px;height:390px;border:1px solid #e5b66d40;border-radius:50%;left:-120px;top:20px;box-shadow:0 0 0 65px #e5b66d0a,0 0 0 130px #e5b66d08}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:55px;align-items:center;padding:76px 0 82px}
+.eyebrow{color:#f5c574;letter-spacing:.4px;font-weight:700;font-size:13px}
+.hero h1{font-size:clamp(32px,4.3vw,55px);line-height:1.35;margin:17px 0 12px}
+.hero h1 em{font-style:normal;color:#ffb44f}
+.hero p{font-size:16px;color:#d4e4e9;max-width:490px;margin:0 0 27px}
+.chips{display:flex;gap:9px;flex-wrap:wrap}
+.chips span{border:1px solid #ffffff36;border-radius:50px;padding:7px 12px;color:#e5eef1;font-size:12px;background:#ffffff0b}
+.hero-card{position:relative;background:#fff;color:var(--ink);padding:31px;border-radius:24px;box-shadow:0 24px 60px #001d2d65;border-top:5px solid var(--gold)}
+.cardheading{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.circle-icon{background:#fff1e1;border-radius:13px;padding:10px;color:var(--orange);display:grid;place-items:center}
+.hero-card h2{margin:0;font-size:22px;color:var(--navy)}
+.hint{color:var(--muted);font-size:13px;margin:0 0 20px}
+.field{margin-top:15px}
+.field label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}
+.field input{width:100%;padding:13px 15px;border:1px solid #d8e2e5;border-radius:12px;background:#fbfcfd;color:var(--ink);min-height:49px}
+.primary{border:0;border-radius:12px;background:linear-gradient(110deg,#e86c11,#fa9235);color:#fff;font-weight:800;padding:15px 20px;width:100%;margin-top:23px;box-shadow:0 7px 15px #f47c202c}
+.primary:hover{filter:brightness(.96)}
+.msg{background:#fff8e8;border-right:4px solid var(--gold);padding:12px;border-radius:9px;color:#654a24;font-size:13px;margin:16px 0 0}
+.msg[hidden]{display:none}
+.wave{height:12px;background:linear-gradient(90deg,var(--gold),var(--orange),var(--gold))}
+.section{padding:62px 0}
+.section-head{text-align:center;margin-bottom:28px}
+.overline{color:#c37c26;font-size:12px;font-weight:800;letter-spacing:1.3px}
+.section h2{color:var(--navy);font-size:clamp(24px,3vw,34px);margin:7px 0}
+.section-head p{color:var(--muted);margin:0}
+.dept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:17px}
+.dept{border:1px solid var(--line);border-radius:18px;padding:25px 18px;background:#fff;box-shadow:0 10px 30px #0734490b;min-height:196px;position:relative;overflow:hidden}
+.dept:after{content:"";position:absolute;bottom:0;right:0;width:65px;height:4px;background:var(--orange)}
+.dept svg{width:44px;height:44px;stroke:var(--orange);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dept h3{font-size:17px;margin:16px 0 2px;color:var(--navy)}
+.dept p{font-size:12px;margin:0;color:var(--muted);direction:ltr;text-align:right}
+.soft{background:var(--sand);border-top:1px solid #efe6d8;border-bottom:1px solid #efe6d8}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.feature{display:flex;align-items:center;gap:12px;padding:17px;background:#fff;border:1px solid #ede4d7;border-radius:15px;font-weight:700;color:var(--navy)}
+.feature svg{width:25px;height:25px;stroke:var(--orange);stroke-width:2;fill:none;flex:none}
+.member{display:flex;justify-content:space-between;align-items:center;gap:25px;border:1px solid #e7dfd1;background:#fff;border-radius:22px;padding:30px}
+.member h2{margin:0 0 7px;font-size:24px}
+.member p{margin:0;color:var(--muted);max-width:680px}
+.status{background:#fff4e4;color:#9a5b13;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:700;white-space:nowrap}
+.disclaimer{background:#f2f6f7;border-right:4px solid var(--navy2);padding:15px 18px;margin-top:22px;border-radius:9px;color:#526875;font-size:13px}
+.footer{background:var(--navy);color:#d7e7eb;text-align:center;padding:28px 18px;font-size:13px}
+.footer strong{color:#ffbd6a}
+.footer small{display:block;margin-top:5px;color:#adc4cd}
+@media(max-width:900px){
+.hero-grid{gap:28px}
+.dept-grid{grid-template-columns:repeat(2,1fr)}
+.features{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:680px){
+.wrap{width:min(100% - 28px,1140px)}
+.nav{min-height:73px}
+.brandmark{width:48px;height:48px}
+.brandtext strong{font-size:24px}
+.navlinks{gap:10px}
+.navlinks a:not(.navtag){display:none}
+.hero-grid{grid-template-columns:1fr;padding:42px 0 50px}
+.hero h1{font-size:35px}
+.hero-card{padding:22px}
+.section{padding:42px 0}
+.dept-grid{gap:11px}
+.dept{padding:18px 12px;min-height:175px}
+.dept h3{font-size:15px}
+.dept p{font-size:11px}
+.features{gap:9px}
+.feature{font-size:12px;padding:12px 9px;gap:8px}
+.member{display:block;padding:22px}
+.status{display:inline-block;margin-top:18px;white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header class="header">
+  <div class="wrap nav">
+    <a class="brand" href="#home" aria-label="LAJNA الرئيسية">
+      <svg class="brandmark" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="رمز فرعوني أكاديمي وعدسة بحث">
+        <path d="M40 7 64 20v23c0 17-12 26-24 31C28 69 16 60 16 43V20Z" fill="#073449" stroke="#d8a54b" stroke-width="3"/>
+        <path d="M26 31 40 22 54 31 40 38Z" fill="#f47c20"/>
+        <path d="M31 34v14c5 4 13 4 18 0V34" fill="none" stroke="#fff" stroke-width="3"/>
+        <path d="M29 54c8-4 14-4 22 0" stroke="#d8a54b" stroke-width="3" fill="none"/>
+        <circle cx="52" cy="52" r="10" fill="#fff" stroke="#f47c20" stroke-width="4"/>
+        <path d="m59 59 9 9" stroke="#f47c20" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <span class="brandtext">
+        <strong>LAJNA</strong>
+        <span>لجنة</span>
+      </span>
+    </a>
+    <nav class="navlinks" aria-label="القائمة الرئيسية">
+      <a href="#home">الرئيسية</a>
+      <a href="#departments">الأقسام الهندسية</a>
+      <a href="#control">أعضاء الكنترول</a>
+      <a class="navtag" href="#lookup">استعلام الطالب</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">LAJNA · ENGINEERING EXAM PORTAL</div>
+        <h1>اعرف <em>لجنتك</em><br>بسهولة وثقة.</h1>
+        <p>بوابة موحدة للاستعلام عن مكان اللجنة ورقم الجلوس وموعد الامتحان، بتجربة رقمية مستوحاة من الحضارة المصرية وروح الهندسة الحديثة.</p>
+        <div class="chips">
+          <span>اتصالات وإلكترونيات</span>
+          <span>عمارة</span>
+          <span>ميكاترونكس</span>
+          <span>مدني</span>
+        </div>
+      </div>
+
+      <div class="hero-card" id="lookup">
+        <div class="cardheading">
+          <div class="circle-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="10" cy="10" r="6"/>
+              <path d="m15 15 6 6"/>
+            </svg>
+          </div>
+          <h2>استعلام الطالب</h2>
+        </div>
+        <p class="hint">أدخل الرقم الجامعي وتاريخ الامتحان لمعرفة تفاصيل اللجنة عند تفعيل الخدمة.</p>
+        <form id="lookupForm">
+          <div class="field">
+            <label for="studentId">الرقم الجامعي</label>
+            <input id="studentId" name="studentId" type="text" inputmode="numeric" autocomplete="off" maxlength="30" placeholder="أدخل الرقم الجامعي" required>
+          </div>
+          <div class="field">
+            <label for="examDate">تاريخ الامتحان</label>
+            <input id="examDate" name="examDate" type="date" required>
+          </div>
+          <button class="primary" type="submit">استعلام عن اللجنة ←</button>
+        </form>
+        <p id="message" class="msg" role="status" aria-live="polite" hidden></p>
+      </div>
+    </div>
+  </section>
+  <div class="wave" aria-hidden="true"></div>
+
+  <section class="section" id="departments">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="overline">ENGINEERING DISCIPLINES</div>
+        <h2>الهندسة بتخصصاتها المختلفة</h2>
+        <p>تصميم موحّد يعكس تنوع التخصصات داخل كلية الهندسة.</p>
+      </div>
+      <div class="dept-grid">
+        <article class="dept">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M24 40V19m-8 21h16M18 19l6-12 6 12M15 27c-5-5-5-11 0-16m18 16c5-5 5-11 0-16M9 32C1 24 1 14 9 6m30 26c8-8 8-18 0-26"/>
+          </svg>
+          <h3>الاتصالات والإلكترونيات</h3>
+          <p>Electronics & Communications</p>
+        </article>
+        <article class="dept">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M7 41V17l17-10 17 10v24M16 41V20h16v21M7 41h34M20 27h8M20 34h8"/>
+          </svg>
+          <h3>الهندسة المعمارية</h3>
+          <p>Architecture</p>
+        </article>
+        <article class="dept">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="13" cy="35" r="5"/>
+            <circle cx="35" cy="13" r="5"/>
+            <path d="m17 31 14-14M13 30V17l9-8 8 5M18 35h15l6 7M35 8V4"/>
+          </svg>
+          <h3>هندسة الميكاترونكس</h3>
+          <p>Mechatronics</p>
+        </article>
+        <article class="dept">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M3 39h42M7 39V16m34 23V16M7 17c9 15 25 15 34 0M7 16h34M16 39V28m16 11V28"/>
+          </svg>
+          <h3>الهندسة المدنية</h3>
+          <p>Civil Engineering</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section soft">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="overline">ONE PLACE, CLEAR ANSWERS</div>
+        <h2>كل التفاصيل في مكان واحد</h2>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-7 8-13a8 8 0 0 0-16 0c0 6 8 13 8 13Z"/><circle cx="12" cy="9" r="3"/></svg>
+          مكان اللجنة
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h4"/></svg>
+          رقم الجلوس
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18"/></svg>
+          موعد الامتحان
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></svg>
+          إرشادات مهمة
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="control">
+    <div class="wrap">
+      <div class="member">
+        <div>
+          <div class="overline">EXAM CONTROL</div>
+          <h2>بوابة أعضاء الكنترول</h2>
+          <p>مساحة مخصصة لإدارة كشوف اللجان، ومراجعة الأخطاء، واعتماد البيانات. تسجيل الدخول ورفع ملفات Excel لم يُفعّلا بعد في نسخة معاينة التصميم.</p>
+        </div>
+        <span class="status">قيد التطوير</span>
+      </div>
+      <div class="disclaimer">هذه معاينة تصميم تجريبية وغير رسمية، ولا تحتوي على بيانات طلاب حقيقية. الاستعلام المعروض لا يتصل بقاعدة بيانات. لا تُدخل بيانات شخصية فعلية بغرض الحصول على نتيجة.</div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <strong>LAJNA | لجنة</strong> — بوابة اللجان الامتحانية
+  <small>نسخة معاينة مستقلة · كلية الهندسة – جامعة سفنكس (سياق تجريبي، دون اعتماد رسمي)</small>
+</footer>
+
+<script>
+document.getElementById('lookupForm').addEventListener('submit',function(event){
+  event.preventDefault();
+  const message=document.getElementById('message');
+  message.hidden=false;
+  message.textContent='هذه نسخة معاينة للتصميم فقط. لم يتم ربط قاعدة البيانات بعد، ولا يمكن عرض بيانات لجنة حقيقية حاليًا.';
+});
+</script>
+</body>
+</html>
