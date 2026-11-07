@@ -240,19 +240,63 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
     </div>
   </section>
 
-  <section class="section" id="control">
-    <div class="wrap">
-      <div class="member">
-        <div>
-          <div class="overline">EXAM CONTROL</div>
-          <h2>بوابة أعضاء الكنترول</h2>
-          <p>مساحة مخصصة لإدارة كشوف اللجان، ومراجعة الأخطاء، واعتماد البيانات. تسجيل الدخول ورفع ملفات Excel لم يُفعّلا بعد في نسخة معاينة التصميم.</p>
-        </div>
-        <span class="status">قيد التطوير</span>
-      </div>
-      <div class="disclaimer">هذه معاينة تصميم تجريبية وغير رسمية، ولا تحتوي على بيانات طلاب حقيقية. الاستعلام المعروض لا يتصل بقاعدة بيانات. لا تُدخل بيانات شخصية فعلية بغرض الحصول على نتيجة.</div>
+
+<section class="section" id="control">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="overline">LAJNA ACCESS</div>
+      <h2>بوابات نظام لجنة</h2>
+      <p>موقع واحد، واختيارات حسب دور المستخدم.</p>
     </div>
-  </section>
+
+    <div class="dept-grid"
+         style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+
+      <article class="dept">
+        <h3>الطلاب</h3>
+        <p style="direction:rtl;text-align:right;margin:12px 0">
+          الاستعلام عن اللجنة ورقم الجلوس.
+        </p>
+        <a href="#lookup"
+           style="display:inline-block;background:#f47c20;color:white;padding:10px 16px;border-radius:10px">
+          استعلام الطالب
+        </a>
+      </article>
+
+      <article class="dept">
+        <h3>أعضاء الكنترول</h3>
+        <p style="direction:rtl;text-align:right;margin:12px 0">
+          تسجيل الدخول ورفع ملفات Excel ومعالجتها.
+        </p>
+        <a href="auth-test.html"
+           style="display:inline-block;background:#073449;color:white;padding:10px 16px;border-radius:10px">
+          دخول أعضاء الكنترول
+        </a>
+        <p style="direction:rtl;text-align:right;margin-top:14px">
+          <a href="upload.html" style="text-decoration:underline">
+            رفع الملفات
+          </a>
+        </p>
+      </article>
+
+      <article class="dept">
+        <h3>مدير النظام</h3>
+        <p style="direction:rtl;text-align:right;margin:12px 0">
+          إدارة الأعضاء والصلاحيات والموافقات.
+        </p>
+        <a href="admin-test.html"
+           style="display:inline-block;background:#073449;color:white;padding:10px 16px;border-radius:10px">
+          لوحة الإدارة
+        </a>
+      </article>
+    </div>
+
+    <div class="disclaimer">
+      النظام في مرحلة التجربة التشغيلية، وليس إعلانًا رسميًا
+      معتمدًا من الجامعة. تظهر نتائج الملفات التي تمت معالجتها فقط.
+    </div>
+  </div>
+</section>
 </main>
 
 <footer class="footer">
