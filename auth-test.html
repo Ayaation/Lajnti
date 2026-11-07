@@ -102,6 +102,8 @@ function errorText(error) {
 }
 
 async function showAccount() {
+  $('uploadLink').hidden = true;
+$('uploadLink').style.display = 'none';
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
@@ -127,6 +129,8 @@ async function showAccount() {
   }
 
   if (admin) {
+    $('uploadLink').hidden = false;
+$('uploadLink').style.display = 'block';
     $('accountStatus').textContent =
       'تم التعرف على حساب المدير. لوحة الإدارة ستضاف لاحقًا.';
     return;
@@ -177,6 +181,10 @@ approved: 'تم اعتماد حسابك. يمكنك الآن رفع ملفات E
 
   $('accountStatus').textContent =
     statuses[profile.status] || 'حالة الحساب غير معروفة.';
+  if (profile.status === 'approved') {
+  $('uploadLink').hidden = false;
+  $('uploadLink').style.display = 'block';
+}
 }
 
 $('signupForm').addEventListener('submit', async event => {
