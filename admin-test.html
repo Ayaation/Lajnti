@@ -49,6 +49,39 @@ a{color:#073449}
 </section>
 
 <section id="dashboard" hidden>
+  
+<div id="statisticsSection">
+  <h2>إحصائيات الموقع</h2>
+  <p>متابعة زيارات LAJNA واستخدام الموقع.</p>
+
+  <div id="statisticsCards"
+       style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:18px 0">
+
+    <div style="background:#edf3f5;padding:18px;border-radius:12px">
+      <strong>إجمالي الزيارات</strong>
+      <h2 id="totalVisits">—</h2>
+    </div>
+
+    <div style="background:#edf3f5;padding:18px;border-radius:12px">
+      <strong>الزوار الفريدون</strong>
+      <h2 id="uniqueVisitors">—</h2>
+    </div>
+
+    <div style="background:#edf3f5;padding:18px;border-radius:12px">
+      <strong>زيارات اليوم</strong>
+      <h2 id="visitsToday">—</h2>
+    </div>
+  </div>
+
+  <button id="refreshStatistics" type="button" class="secondary">
+    تحديث الإحصائيات
+  </button>
+
+  <p id="statisticsMessage" role="status"></p>
+</div>
+
+<hr style="border:0;border-top:1px solid #e4e9e9;margin:24px 0">
+
 <h2>إدارة أعضاء الكنترول</h2>
 <p>يمكنك مراجعة طلبات التسجيل وتغيير حالة الحسابات.</p>
 <button id="refresh" type="button" class="secondary">تحديث القائمة</button>
@@ -130,6 +163,7 @@ return;
 $('loginSection').hidden=true;
 $('dashboard').hidden=false;
 await loadMembers();
+  await loadStatistics();
 }
 
 async function loadMembers(){
@@ -242,6 +276,31 @@ message('تم تسجيل الخروج.');
 await checkAdmin();
 }
 });
+
+async function loadStatistics() {
+  const status = $('statisticsMessage');
+  status.textContent = 'جاري تحميل الإحصائيات...';
+
+  const { data, error } = await supabase.rpc(
+    'get_site_statistics'
+  );
+
+  if (error) {
+    status.textContent = 'تعذر تحميل الإحصائيات: ' + errorText(error);
+    return;
+  }
+
+  $('totalVisits').textContent = data.total_visits ?? 0;
+  $('uniqueVisitors').textContent = data.unique_visitors ?? 0;
+  $('visitsToday').textContent = data.visits_today ?? 0;
+
+  status.textContent = 'تم تحديث الإحصائيات.';
+}
+
+$('refreshStatistics').addEventListener(
+  'click',
+  loadStatistics
+);
 
 await checkAdmin();
 </script>
