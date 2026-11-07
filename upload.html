@@ -232,6 +232,104 @@ $('uploadForm').addEventListener('submit', async event => {
   }
 });
 
+async function showPendingUploads() {
+  if (!currentUser) return;
+
+  const area = document.createElement('section');
+  area.style.marginTop = '24px';
+
+  const heading = document.createElement('h3');
+  heading.textContent = 'ملفات في انتظار المعالجة';
+  area.appendChild(heading);
+
+  const list = document.createElement('div');
+  area.appendChild(list);
+  $('uploadForm').after(area);
+
+  async function refresh() {
+    list.textContent = 'جاري تحميل الملفات...';
+
+    const { data, error } = await supabase
+      .from('exam_uploads')
+      .select('id,file_name,processing_status')
+      .eq('processing_status', 'pending')
+      .order('uploaded_at', { ascending: false });
+
+    if (error) {
+      list.textContent = 'تعذر تحميل الملفات: ' + error.message;
+      return;
+    }
+
+    list.replaceChildren();
+
+    if (!data?.length) {
+      list.textContent = 'لا توجد ملفات في انتظار المعالجة.';
+      return;
+    }
+
+    for (const upload of data) {
+      const item = document.createElement('div');
+      item.style.margin = '12px 0';
+
+      const name = document.createElement('span');
+      name.textContent = upload.file_name + ' — ';
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = 'معالجة وحفظ';
+
+      button.addEventListener('click', async () => {
+        if (!confirm('هل تريدين معالجة وحفظ بيانات هذا الملف؟\n' + upload.file_name)) {
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = 'جاري المعالجة...';
+
+        try {
+          const { data: result, error: invokeError } =
+            await supabase.functions.invoke('super-task', {
+              body: { upload_id: upload.id }
+            });
+
+          if (invokeError) {
+            const details = await invokeError.context?.json?.()
+              .catch(() => null);
+
+            throw new Error(
+              details?.error ||
+              invokeError.message
+            );
+          }
+
+          if (!result?.success) {
+            throw new Error(result?.error || 'لم تكتمل المعالجة');
+          }
+
+          alert(
+            'تم الحفظ بنجاح.\n' +
+            'عدد السجلات: ' + result.saved_count
+          );
+
+          await refresh();
+        } catch (error) {
+          alert('لم يتم الحفظ: ' + error.message);
+          button.disabled = false;
+          button.textContent = 'معالجة وحفظ';
+        }
+      });
+
+      item.append(name, button);
+      list.appendChild(item);
+    }
+  }
+
+  await refresh();
+}
+
+await checkAccess();
+await showPendingUploads();
+
 await checkAccess();
 </script>
 
