@@ -254,7 +254,51 @@ function readSheet(sheet, sheetName) {
 
   return { rows, skipped };
 }
+
 function findDuplicateRecords(rows) {
+  const seen = new Map();
+  const duplicates = [];
+
+  for (const row of rows) {
+    const studentId = String(row.studentId ?? '')
+      .trim()
+      .replace(/\s+/g, '');
+
+    const courseCode = String(row.courseCode ?? '')
+      .trim()
+      .replace(/\s+/g, '')
+      .toUpperCase();
+
+    const examDate = String(row.date ?? '').trim();
+
+    if (!studentId || !courseCode || !examDate) {
+      continue;
+    }
+
+    const key = JSON.stringify([
+      studentId,
+      courseCode,
+      examDate
+    ]);
+
+    if (seen.has(key)) {
+      const first = seen.get(key);
+
+      duplicates.push({
+        studentId,
+        studentName: row.studentName,
+        firstSheet: first.sheetName,
+        duplicateSheet: row.sheetName,
+        firstRow: first.sourceRow,
+        duplicateRow: row.sourceRow
+      });
+    } else {
+      seen.set(key, row);
+    }
+  }
+
+  return duplicates;
+}
   const seen = new Map();
   const duplicates = [];
 
