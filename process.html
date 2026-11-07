@@ -228,6 +228,32 @@ function readSheet(sheet, sheetName) {
   return rows;
 }
 
+function findDuplicateRecords(rows) {
+  const seen = new Map();
+  const duplicates = [];
+
+  for (const row of rows) {
+    const key = [
+      row.studentId.trim(),
+      row.courseCode.trim().toUpperCase(),
+      row.date.trim()
+    ].join('|');
+
+    if (seen.has(key)) {
+      duplicates.push({
+        studentId: row.studentId,
+        studentName: row.studentName,
+        firstSheet: seen.get(key),
+        duplicateSheet: row.sheetName
+      });
+    } else {
+      seen.set(key, row.sheetName);
+    }
+  }
+
+  return duplicates;
+}
+
 function addCell(row, value) {
   const td = document.createElement('td');
   td.textContent = value;
