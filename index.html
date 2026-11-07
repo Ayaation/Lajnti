@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sphinx Engineering | Exam Portal</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #f3f6fa;
+      color: #20324c;
+    }
+    header {
+      background: #17345b;
+      color: white;
+      padding: 24px 18px;
+      text-align: center;
+      border-bottom: 5px solid #c5a46d;
+    }
+    .university {
+      color: #e5c68c;
+      font-size: 15px;
+      letter-spacing: 1px;
+    }
+    h1 { margin: 12px 0 8px; font-size: 27px; }
+    .subtitle { color: #e0e7f0; }
+    main {
+      max-width: 780px;
+      margin: 45px auto;
+      padding: 0 18px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px #17345b12;
+      margin-bottom: 22px;
+    }
+    h2 { margin-top: 0; color: #17345b; }
+    label {
+      display: block;
+      margin: 18px 0 8px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      font: inherit;
+    }
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 15px;
+      background: #17345b;
+      color: white;
+      border: none;
+      border-radius: 9px;
+      font: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #254b7c; }
+    .notice {
+      background: #fff8e9;
+      border-right: 4px solid #c5a46d;
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.8;
+    }
+    .small {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #64748b;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="university">SPHINX UNIVERSITY</div>
+    <h1>كلية الهندسة</h1>
+    <div class="subtitle">
+      بوابة الاستعلام عن لجان الامتحانات
+    </div>
+    <p>Faculty of Engineering | Exam Committee Portal</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>استعلام الطالب</h2>
+      <p>أدخل بياناتك للاستعلام عن لجنة الامتحان.</p>
+
+      <form id="lookupForm">
+        <label for="studentId">الرقم الجامعي</label>
+        <input id="studentId" type="text"
+               inputmode="numeric"
+               placeholder="أدخل الرقم الجامعي"
+               required>
+
+        <label for="examDate">تاريخ الامتحان</label>
+        <input id="examDate" type="date" required>
+
+        <button type="submit">استعلام عن اللجنة</button>
+      </form>
+
+      <p id="message" class="notice" hidden></p>
+    </section>
+
+    <section class="card">
+      <h2>بوابة أعضاء الكنترول</h2>
+      <p>
+        إدارة كشوف اللجان ومراجعة البيانات واعتمادها.
+      </p>
+      <div class="notice">
+        تسجيل الدخول ورفع ملفات Excel غير متاحين
+        في نسخة معاينة التصميم.
+      </div>
+    </section>
+
+    <p class="small">
+      هذه نسخة تجريبية غير رسمية لمعاينة التصميم.
+      لا تحتوي على بيانات طلاب حقيقية.
+    </p>
+  </main>
+
+  <footer>
+    Sphinx University — Faculty of Engineering
+    <br>
+    Exam Portal | Design Preview
+  </footer>
+
+  <script>
+    document.getElementById("lookupForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        const message = document.getElementById("message");
+        message.hidden = false;
+        message.textContent =
+          "هذه معاينة للتصميم فقط. " +
+          "سيتم تفعيل الاستعلام بعد ربط قاعدة البيانات وتأمينها.";
+      });
+  </script>
+</body>
+</html>
