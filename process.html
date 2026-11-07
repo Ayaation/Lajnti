@@ -195,7 +195,65 @@ function examDate(sheet) {
   const match = text.match(/^\d{4}-\d{2}-\d{2}/);
   return match ? match[0] : text;
 }
-function readSheet(sheet, sheetName)
+
+function readSheet(sheet, sheetName) {
+  if (!sheet['!ref']) return { rows: [], skipped: [] };
+
+  const range = XLSX.utils.decode_range(sheet['!ref']);
+
+  const courseName = cell(sheet, 'D8');
+  const courseCode = cell(sheet, 'D9');
+  const date = examDate(sheet);
+  const hall = cell(sheet, 'D11');
+
+  const rows = [];
+  const skipped = [];
+
+  for (let row = 14; row <= range.e.r + 1; row++) {
+    const studentId = cell(sheet, 'L' + row);
+    const studentName = cell(sheet, 'C' + row);
+    const seatNumber = cell(sheet, 'A' + row);
+
+    if (!studentId && !studentName && !seatNumber) {
+      continue;
+    }
+
+    const nameText = studentName.trim().toLowerCase();
+
+    if (/^(observer|name\s*:|signature\s*:|المراقب|الاسم\s*:|التوقيع\s*:)/i.test(nameText)) {
+      continue;
+    }
+
+    const validStudentId = /^\d+$/.test(studentId.trim());
+    const validSeatNumber = /^\d+$/.test(seatNumber.trim());
+
+    if (!validStudentId || !studentName || !validSeatNumber) {
+      skipped.push({
+        sheetName,
+        sourceRow: row,
+        studentId,
+        studentName,
+        seatNumber,
+        reason: 'بيانات الطالب أو رقم الجلوس غير مكتملة'
+      });
+      continue;
+    }
+
+    rows.push({
+      sheetName,
+      sourceRow: row,
+      studentId,
+      studentName,
+      courseName,
+      courseCode,
+      date,
+      hall,
+      seatNumber
+    });
+  }
+
+  return { rows, skipped };
+}
 function findDuplicateRecords(rows) {
   const seen = new Map();
   const duplicates = [];
