@@ -364,6 +364,20 @@ lookupForm.addEventListener('submit', async function (event) {
       title.textContent = exam.course_name || 'بيانات الامتحان';
       card.appendChild(title);
 
+if (exam.student_name_masked) {
+  const studentName = document.createElement('p');
+
+  studentName.style.cssText =
+    'margin:0 0 14px;padding:11px 13px;' +
+    'background:#fff4e8;border-radius:10px;' +
+    'color:#073449;font-size:16px;font-weight:700;';
+
+  studentName.textContent =
+    'اسم الطالب: ' + exam.student_name_masked;
+
+  card.appendChild(studentName);
+}
+
       const fields = [
         ['كود المادة', exam.course_code],
         ['تاريخ الامتحان', exam.exam_date],
