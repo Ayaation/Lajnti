@@ -307,6 +307,23 @@ $('readButton').addEventListener('click', async () => {
       allRows.push(...readSheet(sheet, sheetName));
     }
 
+const duplicates = findDuplicateRecords(allRows);
+
+if (duplicates.length > 0) {
+  $('message').textContent =
+    'تحذير: تم اكتشاف ' + duplicates.length +
+    ' سجل مكرر.\n' +
+    duplicates.map(item =>
+      'الرقم الجامعي: ' + item.studentId +
+      ' | أول ظهور: ' + item.firstSheet +
+      ' | التكرار: ' + item.duplicateSheet
+    ).join('\n') +
+    '\nلم يتم حفظ أي بيانات.';
+} else {
+  $('message').textContent =
+    'لم يتم اكتشاف سجلات مكررة.';
+}
+
 const preview = allRows;
     for (const item of preview) {
       const tr = document.createElement('tr');
@@ -330,10 +347,7 @@ const preview = allRows;
       ' | عدد السجلات المستخرجة: ' + allRows.length;
 
     $('message').textContent =
-      'تمت قراءة الملف محليًا. ' +
-      'المعروض أول 20 سجلًا فقط. ' +
-      'لم تُحفظ أي بيانات في Supabase.';
-
+     
     $('resultsTable').hidden = false;
 
   } catch (error) {
