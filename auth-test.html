@@ -1,1 +1,247 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>LAJNA | تجربة تسجيل أعضاء الكنترول</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Tahoma, Arial, sans-serif; background: #f9f5ed; color: #183342; line-height: 1.7; }
+    header { background: white; padding: 24px; text-align: center; border-top: 5px solid #f47c20; }
+    h1, h2 { color: #073449; }
+    h1 { margin: 0; }
+    main { max-width: 550px; margin: 30px auto; padding: 0 16px; }
+    section { background: white; border: 1px solid #e4e9e9; border-radius: 14px; padding: 24px; margin-bottom: 18px; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input { width: 100%; padding: 11px; border: 1px solid #b9c7ce; border-radius: 8px; font: inherit; }
+    button { background: #073449; color: white; border: none; padding: 12px 18px; border-radius: 8px; margin-top: 18px; cursor: pointer; font: inherit; }
+    button:disabled { opacity: .5; }
+    .notice { background: #fff0db; padding: 12px; border-radius: 8px; }
+    #feedback { background: #eaf1f4; padding: 12px; border-radius: 8px; overflow-wrap: anywhere; }
+    [hidden] { display: none !important; }
+    a { color: #073449; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>LAJNA | لجنة</h1>
+  <p>تجربة تسجيل أعضاء الكنترول</p>
+</header>
+<main>
+  <p class="notice">هذه صفحة اختبار للحسابات فقط. لا تدخلي بيانات طلاب أو ملفات امتحانات.</p>
+
+  <section id="signup">
+    <h2>إنشاء حساب جديد</h2>
+    <form id="signupForm">
+      <label for="fullName">الاسم الكامل</label>
+      <input id="fullName" required minlength="3" maxlength="150" autocomplete="name">
+
+      <label for="phone">رقم الهاتف</label>
+      <input id="phone" type="tel" maxlength="30" autocomplete="tel">
+
+      <label for="signupEmail">البريد الإلكتروني</label>
+      <input id="signupEmail" type="email" required autocomplete="email">
+
+      <label for="signupPassword">كلمة المرور</label>
+      <input id="signupPassword" type="password" required minlength="6" autocomplete="new-password">
+
+      <button type="submit">إنشاء الحساب</button>
+    </form>
+  </section>
+
+  <section id="login">
+    <h2>تسجيل الدخول</h2>
+    <form id="loginForm">
+      <label for="loginEmail">البريد الإلكتروني</label>
+      <input id="loginEmail" type="email" required autocomplete="email">
+
+      <label for="loginPassword">كلمة المرور</label>
+      <input id="loginPassword" type="password" required autocomplete="current-password">
+
+      <button type="submit">دخول</button>
+    </form>
+  </section>
+
+  <section id="account" hidden>
+    <h2>حالة الحساب</h2>
+    <p id="accountStatus"></p>
+    <button id="logout" type="button">تسجيل الخروج</button>
+  </section>
+
+  <p id="feedback" role="status" aria-live="polite" hidden></p>
+  <p><a href="./">العودة إلى الموقع الرئيسي</a></p>
+</main>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const supabase = createClient(
+  'https://agaklcxooywqxqhmvhfe.supabase.co',
+  'sb_publishable_VPwiw3f5KE_AXEjqwJWclA_nYCjdN0c'
+);
+
+const $ = id => document.getElementById(id);
+
+function message(text) {
+  $('feedback').hidden = false;
+  $('feedback').textContent = text;
+}
+
+function errorText(error) {
+  return error?.message || 'حدث خطأ غير متوقع.';
+}
+
+async function showAccount() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    $('signup').hidden = false;
+    $('login').hidden = false;
+    $('account').hidden = true;
+    return;
+  }
+
+  $('signup').hidden = true;
+  $('login').hidden = true;
+  $('account').hidden = false;
+
+  const { data: admin, error: adminError } = await supabase
+    .from('admins')
+    .select('user_id')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (adminError) {
+    $('accountStatus').textContent = 'خطأ في التحقق من الإدارة: ' + errorText(adminError);
+    return;
+  }
+
+  if (admin) {
+    $('accountStatus').textContent =
+      'تم التعرف على حساب المدير. لوحة الإدارة ستضاف لاحقًا.';
+    return;
+  }
+
+  let { data: profile, error: profileError } = await supabase
+    .from('control_members')
+    .select('status')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    $('accountStatus').textContent = 'خطأ في قراءة الحساب: ' + errorText(profileError);
+    return;
+  }
+
+  if (!profile) {
+    const full_name = (user.user_metadata?.full_name || '').trim();
+    const phone = (user.user_metadata?.phone || '').trim();
+
+    if (full_name.length < 3) {
+      $('accountStatus').textContent =
+        'بيانات الاسم غير مكتملة. تواصلي مع الإدارة.';
+      return;
+    }
+
+    const result = await supabase.from('control_members').insert({
+      user_id: user.id,
+      full_name,
+      phone,
+      status: 'pending'
+    });
+
+    if (result.error) {
+      $('accountStatus').textContent =
+        'تعذر إنشاء ملف العضو: ' + errorText(result.error);
+      return;
+    }
+
+    profile = { status: 'pending' };
+  }
+
+  const statuses = {
+    pending: 'طلبك قيد انتظار موافقة الإدارة.',
+    approved: 'تم اعتماد حسابك. رفع الملفات غير متاح بعد.',
+    rejected: 'تم رفض طلب الحساب.',
+    suspended: 'الحساب موقوف.'
+  };
+
+  $('accountStatus').textContent =
+    statuses[profile.status] || 'حالة الحساب غير معروفة.';
+}
+
+$('signupForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const button = event.currentTarget.querySelector('button');
+  button.disabled = true;
+
+  try {
+    const full_name = $('fullName').value.trim();
+    const phone = $('phone').value.trim();
+    const email = $('signupEmail').value.trim();
+    const password = $('signupPassword').value;
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: 'https://ayaation.github.io/lajna/auth-test.html',
+        data: { full_name, phone }
+      }
+    });
+
+    if (error) throw error;
+
+    if (data.session) {
+      message('تم إنشاء الحساب. جاري التحقق من حالته.');
+      await showAccount();
+    } else {
+      message('إذا كان البريد مؤهلًا للتسجيل، ستصلك رسالة تأكيد. افتحي الرابط ثم سجلي الدخول.');
+    }
+
+    $('signupForm').reset();
+  } catch (error) {
+    message('تعذر التسجيل: ' + errorText(error));
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$('loginForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const button = event.currentTarget.querySelector('button');
+  button.disabled = true;
+
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: $('loginEmail').value.trim(),
+      password: $('loginPassword').value
+    });
+
+    if (error) throw error;
+
+    message('تم تسجيل الدخول.');
+    await showAccount();
+  } catch (error) {
+    message('تعذر الدخول: ' + errorText(error));
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$('logout').addEventListener('click', async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) message(errorText(error));
+  else {
+    message('تم تسجيل الخروج.');
+    await showAccount();
+  }
+});
+
+await showAccount();
+</script>
+</body>
+</html>
+
