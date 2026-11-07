@@ -261,6 +261,42 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 </footer>
 
 <script>
+  
+<script>
+(async function () {
+  try {
+    const visitorKey = 'lajna_visitor_id';
+    let visitorId = localStorage.getItem(visitorKey);
+
+    if (!visitorId) {
+      visitorId = crypto.randomUUID();
+      localStorage.setItem(visitorKey, visitorId);
+    }
+
+    const response = await fetch(
+      'https://agaklcxooywqxqhmvhfe.supabase.co/rest/v1/rpc/record_site_visit',
+      {
+        method: 'POST',
+        headers: {
+          'apikey': 'sb_publishable_VPwiw3f5KE_AXEjqwJWclA_nYCjdN0c',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          p_visitor_id: visitorId,
+          p_page_path: '/index.html'
+        })
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('Visit tracking unavailable:', response.status);
+    }
+  } catch (error) {
+    console.warn('Visit tracking unavailable');
+  }
+})();
+</script>
+
 document.getElementById('lookupForm').addEventListener('submit',function(event){
   event.preventDefault();
   const message=document.getElementById('message');
