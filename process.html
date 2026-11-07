@@ -66,18 +66,59 @@ function cell(sheet,address){
   const value=sheet[address]?.v;
   return normalize(value);
 }
-function examDate(sheet){
-  const raw=sheet['D10'];
-  if(!raw)return '';
-  if(raw.t==='n'){
-    const d=XLSXLib.SSF.parse_date_code(raw.v);
-    if(!d)return '';
-    return [d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');
+
+function examDate(sheet) {
+  const raw = sheet['D10'];
+  if (!raw) return '';
+
+  function formatDate(year, month, day) {
+    const y = Number(year);
+    const m = Number(month);
+    const d = Number(day);
+
+    const date = new Date(Date.UTC(y, m - 1, d));
+
+    if (
+      y < 1900 ||
+      date.getUTCFullYear() !== y ||
+      date.getUTCMonth() + 1 !== m ||
+      date.getUTCDate() !== d
+    ) {
+      return '';
+    }
+
+    return [
+      String(y),
+      String(m).padStart(2, '0'),
+      String(d).padStart(2, '0')
+    ].join('-');
   }
-  if(raw.v instanceof Date && !Number.isNaN(raw.v.getTime())){
-    const d=raw.v;
-    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+
+  if (raw.t === 'n') {
+    const parsed = XLSX.SSF.parse_date_code(raw.v);
+    if (!parsed) return '';
+
+    return formatDate(parsed.y, parsed.m, parsed.d);
   }
+
+  const text = String(raw.v).trim();
+
+  // YYYY-MM-DD
+  let match = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+
+  if (match) {
+    return formatDate(match[1], match[2], match[3]);
+  }
+
+  // DD/MM/YYYY - Egyptian date format
+  match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+
+  if (match) {
+    return formatDate(match[3], match[2], match[1]);
+  }
+
+  return '';
+}
   const value=normalize(raw.v);
   const iso=value.match(/^\d{4}-\d{2}-\d{2}/);
   if(iso)return iso[0];
