@@ -194,12 +194,11 @@ const {error}=await supabase.rpc('change_member_status',{
 });
 
 if(error){
-message('فشل التعديل: '+errorText(error));
-}else if(!updated||updated.length!==1){
-message('لم يتم تأكيد تعديل الحساب. راجعي صلاحيات قاعدة البيانات.');
+  message('فشل التعديل: '+errorText(error));
 }else{
-message('تم تحديث حالة العضو بنجاح.');
+  message('تم إرسال قرار تحديث حالة العضو بنجاح.');
 }
+
 
 await loadMembers();
 button.disabled=false;
