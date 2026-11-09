@@ -184,17 +184,13 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
     { text: "﴿ فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ﴾", source: "سورة الشرح — الآية 5" },
     { text: "﴿ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ ﴾", source: "سورة البقرة — الآية 153" },
     { text: "﴿ رَبِّ اشْرَحْ لِي صَدْرِي ﴾", source: "سورة طه — الآية 25" },
-    { text: "سبحان الله وبحمده", source: "ذكر" },
-    { text: "الحمد لله", source: "ذكر" },
-    { text: "أستغفر الله وأتوب إليه", source: "استغفار" },
-    { text: "لا حول ولا قوة إلا بالله", source: "ذكر" },
-    { text: "اللهم صلِّ وسلم على نبينا محمد", source: "الصلاة على النبي ﷺ" }
-    
-    // أذكار وتسبيح وتحميد واستغفار
+    { text: "﴿ وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ ﴾", source: "سورة هود — الآية 88" },
+    { text: "﴿ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ ﴾", source: "سورة الرعد — الآية 28" },
+    { text: "﴿ إِنَّ مَعَ الْعُسْرِ يُسْرًا ﴾", source: "سورة الشرح — الآية 6" },
+
     { text: "سبحان الله وبحمده", source: "تسبيح" },
     { text: "سبحان الله العظيم", source: "تسبيح" },
     { text: "سبحان الله وبحمده، سبحان الله العظيم", source: "تسبيح" },
-    { text: "سبحان الله", source: "تسبيح" },
     { text: "الحمد لله", source: "تحميد" },
     { text: "الحمد لله رب العالمين", source: "تحميد" },
     { text: "لا إله إلا الله", source: "تهليل" },
@@ -204,25 +200,41 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
     { text: "أستغفر الله وأتوب إليه", source: "استغفار" },
     { text: "سبحان الله والحمد لله ولا إله إلا الله والله أكبر", source: "ذكر" },
     { text: "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير", source: "تهليل" },
+
     { text: "لا إله إلا أنت سبحانك إني كنت من الظالمين", source: "دعاء — الأنبياء: 87" },
-    { text: "رب اغفر لي وتب علي إنك أنت التواب الرحيم", source: "دعاء واستغفار" },
     { text: "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار", source: "دعاء — البقرة: 201" },
     { text: "ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة إنك أنت الوهاب", source: "دعاء — آل عمران: 8" },
-    { text: "رب اشرح لي صدري ويسر لي أمري", source: "دعاء — طه: 25–26" },
-    { text: "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم", source: "ذكر — التوبة: 129" },
     { text: "اللهم أعني على ذكرك وشكرك وحسن عبادتك", source: "دعاء" },
     { text: "اللهم إني أسألك الهدى والتقى والعفاف والغنى", source: "دعاء" },
     { text: "اللهم إنك عفو تحب العفو فاعف عني", source: "دعاء" },
     { text: "يا مقلب القلوب ثبت قلبي على دينك", source: "دعاء" },
-    { text: "اللهم إني أعوذ بك من الهم والحزن، والعجز والكسل، والجبن والبخل، وضلع الدين وغلبة الرجال", source: "دعاء" },
-    { text: "اللهم صل وسلم على نبينا محمد", source: "الصلاة على النبي ﷺ" },
-    { text: "اللهم صل على محمد وعلى آل محمد", source: "الصلاة على النبي ﷺ" },
 
+    { text: "اللهم صلِّ وسلم على نبينا محمد", source: "الصلاة على النبي ﷺ" },
+    { text: "اللهم صلِّ على محمد وعلى آل محمد", source: "الصلاة على النبي ﷺ" }
   ];
 
-  const selected = messages[Math.floor(Math.random() * messages.length)];
-  document.getElementById("faithText").textContent = selected.text;
-  document.getElementById("faithSource").textContent = selected.source;
+  const textElement = document.getElementById("faithText");
+  const sourceElement = document.getElementById("faithSource");
+  const nextButton = document.getElementById("nextFaith");
+
+  if (!textElement || !sourceElement || !nextButton) return;
+
+  let currentIndex = -1;
+
+  function showMessage() {
+    let nextIndex;
+
+    do {
+      nextIndex = Math.floor(Math.random() * messages.length);
+    } while (messages.length > 1 && nextIndex === currentIndex);
+
+    currentIndex = nextIndex;
+    textElement.textContent = messages[nextIndex].text;
+    sourceElement.textContent = messages[nextIndex].source;
+  }
+
+  nextButton.addEventListener("click", showMessage);
+  showMessage();
 })();
 </script>
 
