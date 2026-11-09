@@ -159,7 +159,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
           </div>
           <h2>استعلام الطالب</h2>
         </div>
-        <p class="hint">أدخل الرقم الجامعي وتاريخ الامتحان لمعرفة تفاصيل اللجنة عند تفعيل الخدمة.</p>
+
+<p class="hint" style="text-align:center;font-size:17px;font-weight:bold;color:#b47829">
+  ❝ أَشْرِقْ وَكَأَنَّ الْكَوْنَ كُلَّهُ لَكَ ❞
+</p>
         <form id="lookupForm">
           <div class="field">
             <label for="studentId">الرقم الجامعي</label>
@@ -173,11 +176,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
         </form>
         <p id="message" class="msg" role="status" aria-live="polite" hidden></p>
         
-<div id="faithMessage" style="margin-top:18px;padding:15px;background:#f9f5ed;border:1px solid #e8dfd0;border-radius:12px;text-align:center">
-  <div style="font-size:12px;color:#9a681d;font-weight:bold;margin-bottom:8px">نفحة إيمانية</div>
-  <div id="faithText" style="color:#073449;font-size:17px;line-height:2;font-weight:bold"></div>
-  <div id="faithSource" style="color:#637784;font-size:12px;margin-top:7px"></div>
-</div>
 
 <script>
 (function () {
@@ -191,6 +189,35 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
     { text: "أستغفر الله وأتوب إليه", source: "استغفار" },
     { text: "لا حول ولا قوة إلا بالله", source: "ذكر" },
     { text: "اللهم صلِّ وسلم على نبينا محمد", source: "الصلاة على النبي ﷺ" }
+    
+    // أذكار وتسبيح وتحميد واستغفار
+    { text: "سبحان الله وبحمده", source: "تسبيح" },
+    { text: "سبحان الله العظيم", source: "تسبيح" },
+    { text: "سبحان الله وبحمده، سبحان الله العظيم", source: "تسبيح" },
+    { text: "سبحان الله", source: "تسبيح" },
+    { text: "الحمد لله", source: "تحميد" },
+    { text: "الحمد لله رب العالمين", source: "تحميد" },
+    { text: "لا إله إلا الله", source: "تهليل" },
+    { text: "الله أكبر", source: "تكبير" },
+    { text: "لا حول ولا قوة إلا بالله", source: "ذكر" },
+    { text: "أستغفر الله", source: "استغفار" },
+    { text: "أستغفر الله وأتوب إليه", source: "استغفار" },
+    { text: "سبحان الله والحمد لله ولا إله إلا الله والله أكبر", source: "ذكر" },
+    { text: "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير", source: "تهليل" },
+    { text: "لا إله إلا أنت سبحانك إني كنت من الظالمين", source: "دعاء — الأنبياء: 87" },
+    { text: "رب اغفر لي وتب علي إنك أنت التواب الرحيم", source: "دعاء واستغفار" },
+    { text: "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار", source: "دعاء — البقرة: 201" },
+    { text: "ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة إنك أنت الوهاب", source: "دعاء — آل عمران: 8" },
+    { text: "رب اشرح لي صدري ويسر لي أمري", source: "دعاء — طه: 25–26" },
+    { text: "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم", source: "ذكر — التوبة: 129" },
+    { text: "اللهم أعني على ذكرك وشكرك وحسن عبادتك", source: "دعاء" },
+    { text: "اللهم إني أسألك الهدى والتقى والعفاف والغنى", source: "دعاء" },
+    { text: "اللهم إنك عفو تحب العفو فاعف عني", source: "دعاء" },
+    { text: "يا مقلب القلوب ثبت قلبي على دينك", source: "دعاء" },
+    { text: "اللهم إني أعوذ بك من الهم والحزن، والعجز والكسل، والجبن والبخل، وضلع الدين وغلبة الرجال", source: "دعاء" },
+    { text: "اللهم صل وسلم على نبينا محمد", source: "الصلاة على النبي ﷺ" },
+    { text: "اللهم صل على محمد وعلى آل محمد", source: "الصلاة على النبي ﷺ" },
+
   ];
 
   const selected = messages[Math.floor(Math.random() * messages.length)];
@@ -455,12 +482,61 @@ if (exam.student_name_masked) {
   card.appendChild(studentName);
 }
 
+const roomFloors = {
+  "CLASS 4": "الأرضي / البدروم",
+  "CLASS 5": "الأرضي / البدروم",
+  "CLASS 6": "الأرضي / البدروم",
+  "CLASS 7": "الأرضي / البدروم",
+  "CLASS 8": "الأرضي / البدروم",
+  "HALL DC": "الأرضي / البدروم",
+  "HALL CC": "الأرضي / البدروم",
+
+  "HALL A": "الدور الأول",
+  "HALL B": "الدور الأول",
+  "CLASS 1": "الدور الأول",
+  "CLASS 2": "الدور الأول",
+  "CLASS 3": "الدور الأول",
+  "DRAWING HALL 1": "الدور الأول",
+  "DRAWING HALL 2": "الدور الأول",
+  "FLUID LAB": "الدور الأول",
+
+  "HALL C": "الدور الثاني",
+  "HALL D": "الدور الثاني",
+  "DRAWING HALL 3": "الدور الثاني",
+  "DRAWING HALL 4": "الدور الثاني",
+
+  "HALL E": "الدور الثالث",
+  "HALL F": "الدور الثالث",
+  "DRAWING HALL 5": "الدور الثالث",
+  "DRAWING HALL 6": "الدور الثالث",
+
+  "HALL AC": "الدور الرابع",
+  "HALL BC": "الدور الرابع"
+};
+
+function getExamFloor(hall) {
+  if (!hall) return "الدور غير محدد";
+
+  let name = String(hall)
+    .toUpperCase()
+    .replace(/[()._-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // توحيد صيغ مثل A Hall و Hall A
+  name = name.replace(/^([A-Z]+) HALL$/, "HALL $1");
+
+  // توحيد صيغ مثل D.Hall (1) و Drawing Hall 1
+  name = name.replace(/^D HALL (\d+)$/, "DRAWING HALL $1");
+
+  return roomFloors[name] || "الدور غير محدد";
+}
+
       const fields = [
-        ['كود المادة', exam.course_code],
-        ['تاريخ الامتحان', exam.exam_date],
-        ['وقت الامتحان', exam.exam_time],
-        ['اللجنة', exam.hall],
-        ['رقم الجلوس', exam.seat_number]
+['وقت الامتحان', exam.exam_time],
+['اللجنة', exam.hall],
+['الدور', getExamFloor(exam.hall)],
+['رقم الجلوس', exam.seat_number]
       ];
 
       for (const [label, value] of fields) {
@@ -489,58 +565,6 @@ if (exam.student_name_masked) {
 });
 </script>
   
-<script>
-(function () {
-  const messages = [
-    // آيات قرآنية
-    { text: "﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾", source: "سورة طه — الآية 114" },
-    { text: "﴿ فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ﴾", source: "سورة الشرح — الآية 5" },
-    { text: "﴿ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ ﴾", source: "سورة البقرة — الآية 153" },
-    { text: "﴿ رَبِّ اشْرَحْ لِي صَدْرِي ﴾", source: "سورة طه — الآية 25" },
-    { text: "﴿ وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ ﴾", source: "سورة هود — الآية 88" },
-    { text: "﴿ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ ﴾", source: "سورة الرعد — الآية 28" },
-    { text: "﴿ إِنَّ مَعَ الْعُسْرِ يُسْرًا ﴾", source: "سورة الشرح — الآية 6" },
-    { text: "﴿ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ ﴾", source: "سورة الملك — الآية 1" },
-
-    // أذكار
-    { text: "سبحان الله وبحمده", source: "تسبيح" },
-    { text: "سبحان الله العظيم", source: "تسبيح" },
-    { text: "الحمد لله", source: "تحميد" },
-    { text: "لا إله إلا الله", source: "تهليل" },
-    { text: "الله أكبر", source: "تكبير" },
-    { text: "أستغفر الله وأتوب إليه", source: "استغفار" },
-    { text: "لا حول ولا قوة إلا بالله", source: "ذكر" },
-    { text: "سبحان الله والحمد لله ولا إله إلا الله والله أكبر", source: "ذكر" },
-
-    // الصلاة على النبي ﷺ
-    { text: "اللهم صلِّ وسلم على نبينا محمد", source: "الصلاة على النبي ﷺ" },
-    { text: "اللهم صلِّ على محمد وعلى آل محمد", source: "الصلاة على النبي ﷺ" }
-  ];
-
-  const textElement = document.getElementById("faithText");
-  const sourceElement = document.getElementById("faithSource");
-  const nextButton = document.getElementById("nextFaith");
-
-  if (!textElement || !sourceElement || !nextButton) return;
-
-  let currentIndex = -1;
-
-  function showMessage() {
-    let nextIndex;
-
-    do {
-      nextIndex = Math.floor(Math.random() * messages.length);
-    } while (messages.length > 1 && nextIndex === currentIndex);
-
-    currentIndex = nextIndex;
-    textElement.textContent = messages[nextIndex].text;
-    sourceElement.textContent = messages[nextIndex].source;
-  }
-
-  nextButton.addEventListener("click", showMessage);
-  showMessage();
-})();
-</script>
 
 </body>
 </html>
