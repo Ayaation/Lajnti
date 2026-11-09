@@ -134,14 +134,20 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
       <div>
         <div class="eyebrow">LAJNA · ENGINEERING EXAM PORTAL</div>
         <h1>اعرف <em>لجنتك</em><br>بسهولة وثقة.</h1>
-        <p>بوابة موحدة للاستعلام عن مكان اللجنة ورقم الجلوس وموعد الامتحان، بتجربة رقمية مستوحاة من الحضارة المصرية وروح الهندسة الحديثة.</p>
         <div class="chips">
-          <span>اتصالات وإلكترونيات</span>
-          <span>عمارة</span>
-          <span>ميكاترونكس</span>
-          <span>مدني</span>
-        </div>
-      </div>
+          
+<div id="faithCard" style="margin-top:24px;padding:22px 18px;background:#ffffff;border-radius:18px;text-align:center;box-shadow:0 12px 30px #001d2d30;border-top:4px solid #d8a54b">
+  <div style="color:#a56b1d;font-size:15px;font-weight:bold;margin-bottom:12px">
+    ✦ نور لقلبك ✦
+  </div>
+  <div id="faithText" style="color:#073449;font-size:20px;font-weight:bold;line-height:2"></div>
+  <div id="faithSource" style="color:#637784;font-size:13px;margin-top:9px"></div>
+  <button id="nextFaith" type="button" style="margin-top:15px;padding:9px 18px;border:1px solid #d8a54b;border-radius:10px;background:#fffaf0;color:#073449;font-weight:bold">
+    آية أو ذكر آخر ↻
+  </button>
+</div>
+
+               </div>
 
       <div class="hero-card" id="lookup">
         <div class="cardheading">
@@ -482,5 +488,59 @@ if (exam.student_name_masked) {
   }
 });
 </script>
+  
+<script>
+(function () {
+  const messages = [
+    // آيات قرآنية
+    { text: "﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾", source: "سورة طه — الآية 114" },
+    { text: "﴿ فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ﴾", source: "سورة الشرح — الآية 5" },
+    { text: "﴿ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ ﴾", source: "سورة البقرة — الآية 153" },
+    { text: "﴿ رَبِّ اشْرَحْ لِي صَدْرِي ﴾", source: "سورة طه — الآية 25" },
+    { text: "﴿ وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ ﴾", source: "سورة هود — الآية 88" },
+    { text: "﴿ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ ﴾", source: "سورة الرعد — الآية 28" },
+    { text: "﴿ إِنَّ مَعَ الْعُسْرِ يُسْرًا ﴾", source: "سورة الشرح — الآية 6" },
+    { text: "﴿ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ ﴾", source: "سورة الملك — الآية 1" },
+
+    // أذكار
+    { text: "سبحان الله وبحمده", source: "تسبيح" },
+    { text: "سبحان الله العظيم", source: "تسبيح" },
+    { text: "الحمد لله", source: "تحميد" },
+    { text: "لا إله إلا الله", source: "تهليل" },
+    { text: "الله أكبر", source: "تكبير" },
+    { text: "أستغفر الله وأتوب إليه", source: "استغفار" },
+    { text: "لا حول ولا قوة إلا بالله", source: "ذكر" },
+    { text: "سبحان الله والحمد لله ولا إله إلا الله والله أكبر", source: "ذكر" },
+
+    // الصلاة على النبي ﷺ
+    { text: "اللهم صلِّ وسلم على نبينا محمد", source: "الصلاة على النبي ﷺ" },
+    { text: "اللهم صلِّ على محمد وعلى آل محمد", source: "الصلاة على النبي ﷺ" }
+  ];
+
+  const textElement = document.getElementById("faithText");
+  const sourceElement = document.getElementById("faithSource");
+  const nextButton = document.getElementById("nextFaith");
+
+  if (!textElement || !sourceElement || !nextButton) return;
+
+  let currentIndex = -1;
+
+  function showMessage() {
+    let nextIndex;
+
+    do {
+      nextIndex = Math.floor(Math.random() * messages.length);
+    } while (messages.length > 1 && nextIndex === currentIndex);
+
+    currentIndex = nextIndex;
+    textElement.textContent = messages[nextIndex].text;
+    sourceElement.textContent = messages[nextIndex].source;
+  }
+
+  nextButton.addEventListener("click", showMessage);
+  showMessage();
+})();
+</script>
+
 </body>
 </html>
